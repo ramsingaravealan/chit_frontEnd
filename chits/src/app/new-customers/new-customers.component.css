@@ -1,0 +1,32 @@
+ .no-outline:focus {
+    outline: none;
+  }
+  .view{
+    margin-left: 5px;
+  }
+  /* .profile{
+   width: 80px;
+  border-radius: 100%;
+  } */
+  .display-4{
+    margin: 75px;
+  }
+  .profile{
+    margin-left: 480px;
+  }
+  .print{
+    float: right;
+  }
+  /* .second{
+    margin-left: 2px;
+  }
+  .third{
+    margin-left: 1px;
+  } */
+  #flexSwitchCheckChecked{
+margin-left: 55px;
+  }
+  
+
+
+  

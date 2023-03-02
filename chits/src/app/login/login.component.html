@@ -1,0 +1,69 @@
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg fixed-top navbar-transparent">
+  <div class="container">        
+      <div class="navbar-translate n_logo">
+          <a class="navbar-brand tit" href="#" title="" target="_blank "> Chit Funds </a>
+          <button class="navbar-toggler" type="button">
+              <span class="navbar-toggler-bar bar1"></span>
+              <span class="navbar-toggler-bar bar2"></span>
+              <span class="navbar-toggler-bar bar3"></span>
+          </button>
+      </div>
+      
+  </div>
+</nav>
+<!-- End Navbar -->
+<div class="page-header">
+  <div class="page-header-image" style="background-image:url(assets/images/money.png)"></div>
+  <div class="container">
+      <div class="col-md-12 content-center">
+          <div class="card-plain">
+            <form (ngSubmit)="onSubmit()" #baseForm="ngForm">
+                  <div class="header">
+                      <div class="logo-container">
+                          <!-- <img src="assets/images/logo.svg" alt=""> -->
+                      </div>
+                      <h5>{{ app.text.log_in || 'log_in' }}</h5>
+                  </div>
+                  <div class="content">                                                
+                      <div class="input-group input-lg">
+                          <input type="text" class="form-control" 
+                          id="user_email" required [(ngModel)]="login.user_email"
+                              name="user_email" #user_email="ngModel" pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
+                              placeholder="{{ app.text.enter || 'enter' }} {{ app.text.email || 'email' }}">
+                          <span class="input-group-addon">
+                              <i class="zmdi zmdi-account-circle"></i>
+                          </span>
+                      </div>
+                      <div class="input-group input-lg">
+                          <input type="password" class="form-control" 
+                          id="user_password" required [(ngModel)]="login.user_password"
+                              name="user_password" #user_password="ngModel" placeholder="{{ app.text.enter || 'enter' }} {{ app.text.password || 'password' }}"
+                          >
+                          <span class="input-group-addon">
+                              <i class="zmdi zmdi-lock"></i>
+                          </span>
+                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-12">
+                      <div class="alert alert-dismissible alert-primary" style="margin: 10px" *ngIf="status !== ''">
+                        {{ status }}</div>
+                    </div>
+                  </div>
+                  <div class="footer text-center">
+                      <button type="submit" class="btn l-cyan btn-round btn-lg btn-block waves-effect waves-light" [disabled]="!baseForm.form.valid" *ngIf="btnText == 'Login'">
+                        {{ app.text.sign_in || 'sign_in' }}
+                      </button>
+                      <button type="submit" class="btn l-cyan btn-round btn-lg btn-block waves-effect waves-light" disabled *ngIf="btnText != 'Login'">
+                        {{ app.text.signing_in || 'signing_in' }}
+                      </button>
+                      <!-- <h6 class="m-t-20"><a routerLink="/forgotpassword" class="link">Forgot Password?</a></h6> -->
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+
+</div>

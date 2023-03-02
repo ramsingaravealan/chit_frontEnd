@@ -1,0 +1,230 @@
+<section class="content">
+  <div class="block-header">
+    <div class="row">
+      <div class="col-lg-7 col-md-6 col-sm-12">
+        <h2>Users
+          <small class="text-muted"></small>
+        </h2>
+      </div>
+      <div class="col-lg-5 col-md-6 col-sm-12">
+        <button class="btn btn-primary btn-icon btn-round hidden-sm-down float-right m-l-10" type="button"
+          (click)="add()">
+          <i class="zmdi zmdi-plus"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row clearfix">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="body">
+            <h2 class="card-inside-title"></h2>
+            <div class="row clearfix">
+              <div class="col-md-12">
+                <form (ngSubmit)="onSearchSubmit()" #searchForm="ngForm">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label class="font-weight-normal">{{ app.text.per_page || 'per_page' }}<span
+                            class="required"></span></label>
+                        <select class="custom-select form-control" id="num_per_page" required [(ngModel)]="num_per_page"
+                          name="num_per_page">
+                          <option value="5">5</option>
+                          <option value="10">10</option>
+                          <option value="25">25</option>
+                          <option value="50">50</option>
+                          <option value="100">100</option>
+                          <option value="200">200</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <label for="search">{{ app.text.search || 'search' }}</label>
+                        <app-text-field [(ngModel)]="search" type="text" view="input"
+                          placeholder="{{ app.text.search || 'search' }} {{ app.text.here || 'here' }}" name="search"
+                          cId="search" #searchx="ngModel" required="false"></app-text-field>
+                        <div [hidden]="searchx.valid" class="text-danger"> {{ app.text.search || 'search' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block pull-right waves-effect"
+                          [disabled]="!searchForm.form.valid" style="margin-top: 30px">{{ app.text.search || 'search'
+                          }}</button>
+                      </div>
+                    </div>
+
+                  </div>
+                </form>
+
+              </div>
+              <div class="col-md-12">
+                <div class="body table-responsive">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th> #</th>
+                        <th> User Email</th>
+                        <th>User Name</th>
+                        <th> User Log</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let listItem of users;let i=index">
+                        <td>{{i+1}}</td>
+                        <td>{{listItem.user_email}}</td>
+                        <td>{{listItem.user_name}}</td>
+                        <td>{{convertToDateTime(listItem.user_log)}}</td>
+                        <td><a (click)="editItem(listItem)" style="cursor: pointer;"><img src="assets/images/edit.png" width="20" height="20"></a><span><a (click)="deleteItem(listItem.user_id)" style="cursor: pointer;"><img src="assets/images/delete.png" width="20" height="20"></a></span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <button class="btn btn-primary btn-block" *ngIf="start_from+received != count && users.length > 0"
+                  (click)="moveNext()"><span class="float-left"> {{displayCount}} </span> <span class="float-right">{{
+                    app.text.load_more || 'load_more' }}..</span></button>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<div class="modal fade" id="myModaluser_id" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <form (ngSubmit)="onSubmit()" #baseForm="ngForm">
+        <div class="modal-header">
+          <h4 class="title" id="largeModalLabeluser_id" *ngIf="user.user_id == '-1'">
+            {{ app.text.add || 'Add' }}
+          </h4>
+          <h4 class="title" id="largeModalLabeluser_id" *ngIf="user.user_id != '-1'">
+            {{ app.text.edit || 'Edit' }}
+          </h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+
+
+              <fieldset class="form-group">
+                <label for="user_email">User Email</label>
+                <app-text-field [(ngModel)]="user.user_email" type="text" view="email"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.user_email || 'user_email' }}"
+                  name="user_email" cId="user_email" #user_email="ngModel" required="false"></app-text-field>
+                <div [hidden]="user_email.valid" class="text-danger"> {{ app.text.user_email || 'user_email' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <label for="user_password"> User Password <span
+                    *ngIf="user.user_id != '-1'"> ({{ app.text.leave_empty_ifno_change || 'leave_empty_ifno_change'
+                    }})</span></label>
+                <app-text-field [(ngModel)]="user.user_password" type="password" view="password"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.user_password || 'user_password' }}"
+                  name="user_password" cId="user_password" #user_password="ngModel"
+                  [required]="user.user_id != '-1' ? 'false' : 'true'"></app-text-field>
+                <div [hidden]="user_password.valid" class="text-danger"> {{ app.text.user_password || 'user_password' }}
+                  {{ app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+
+              <fieldset class="form-group">
+                <label for="user_name"> User Name</label>
+                <app-text-field [(ngModel)]="user.user_name" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.user_name || 'user_name' }}" name="user_name"
+                  cId="user_name" #user_name="ngModel" required="false"></app-text-field>
+                <div [hidden]="user_name.valid" class="text-danger"> {{ app.text.user_name || 'user_name' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+
+              <!-- <fieldset class="form-group">
+                <label for="user_last_name">{{ app.text.user_last_name || 'user_last_name' }}</label>
+                <app-text-field [(ngModel)]="user.user_last_name" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.user_last_name || 'user_last_name' }}"
+                  name="user_last_name" cId="user_last_name" #user_last_name="ngModel" required="false">
+                </app-text-field>
+                <div [hidden]="user_last_name.valid" class="text-danger"> {{ app.text.user_last_name || 'user_last_name'
+                  }} {{ app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset> -->
+              <!-- <fieldset class="form-group">
+                <label for="user_photo">{{ app.text.user_photo || 'user_photo' }}</label>
+                <app-image-upload cId="user_photo" name="user_photo" [(ngModel)]="user.user_photo"
+                  #user_photo="ngModel"></app-image-upload>
+                <div [hidden]="user_photo.valid || user_photo.pristine" class="text-danger"> {{ app.text.user_photo ||
+                  'user_photo' }} {{ app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset> -->
+              <!-- <fieldset class="form-group">
+                <label for="user_type">{{ app.text.user_type || 'user_type' }}</label>
+                <select class="form-control" id="user_type" [(ngModel)]="user.user_type" name="user_type"
+                  #user_type="ngModel" required>
+                  <option value="backoffice">{{ app.text.backoffice || 'backoffice' }}</option>
+                  <option value="administrator">{{ app.text.administrator || 'administrator' }}</option>
+                </select>
+              </fieldset> -->
+
+              <!-- <fieldset class="form-group">
+                <label for="user_mobile_phone">{{ app.text.user_mobile_phone || 'user_mobile_phone' }}</label>
+                <app-text-field [(ngModel)]="user.user_mobile_phone" type="text" view="phone"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.user_mobile_phone || 'user_mobile_phone' }}"
+                  name="user_mobile_phone" cId="user_mobile_phone" #user_mobile_phone="ngModel" required="false">
+                </app-text-field>
+                <div [hidden]="user_mobile_phone.valid" class="text-danger"> {{ app.text.user_mobile_phone ||
+                  'user_mobile_phone' }} {{ app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset> -->
+
+              <!-- <fieldset class="form-group">
+                <label for="user_sub_category">{{ app.text.user_sub_category || 'user_sub_category' }}</label>
+                <app-text-field [(ngModel)]="user.user_sub_category" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.user_sub_category || 'user_sub_category' }}"
+                  name="user_sub_category" cId="user_sub_category" #user_sub_category="ngModel" required="false">
+                </app-text-field>
+                <div [hidden]="user_sub_category.valid" class="text-danger"> {{ app.text.user_sub_category ||
+                  'user_sub_category' }} {{ app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset> -->
+              <!-- <fieldset class="form-group">
+                <label for="user_active">{{ app.text.user_active || 'user_active' }}</label>
+                <select class="form-control" id="user_active" [(ngModel)]="user.user_active" name="user_active"
+                  #user_active="ngModel" required>
+                  <option value="Y">{{ app.text.yes || 'yes' }}</option>
+                  <option value="N">{{ app.text.no || 'no' }}</option>
+                </select>
+              </fieldset> -->
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary btn-round waves-effect" [disabled]="!baseForm.form.valid"
+            *ngIf="loadingText == 'Save'">
+            {{ app.text.save || 'save' }}
+          </button>
+          <button type="submit" class="btn btn-primary btn-round waves-effect" disabled *ngIf="loadingText != 'Save'">
+            {{ app.text.saving || 'saving' }}
+          </button>
+          <button type="button" class="btn btn-danger btn-round waves-effect" data-dismiss="modal">{{ app.text.cancel ||
+            'cancel' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

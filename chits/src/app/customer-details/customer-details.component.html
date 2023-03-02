@@ -1,0 +1,237 @@
+<section class="content">
+  <div class="block-header">
+    <div class="row">
+      <div class="col-lg-7 col-md-6 col-sm-12">
+        <h2>{{ app.text.company_details || 'company_details' }}
+          <small class="text-muted"></small>
+        </h2>
+      </div>
+      <div class="col-lg-5 col-md-6 col-sm-12">
+        <button class="btn btn-primary btn-icon btn-round hidden-sm-down float-right m-l-10" type="button"
+          (click)="add()">
+          <i class="zmdi zmdi-plus"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row clearfix">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="body">
+            <h2 class="card-inside-title"></h2>
+            <div class="row clearfix">
+              <div class="col-md-12">
+                <form (ngSubmit)="onSearchSubmit()" #searchForm="ngForm">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <!-- <fieldset class="form-group">
+                        <label>{{ app.text.cd_id || 'cd_id' }}</label>
+                        <app-select cId="cd_id_search" name="cd_id_search"
+                          placeholder="{{ app.text.select || 'select' }} {{ app.text.cd_id || 'cd_id' }}"
+                          [(ngModel)]="cd_id_search" required="false" #cd_id_searchx="ngModel"
+                          (change)="oncompanydetailsIdChangedOnSearch($event)" [payload]="cd_id_payload_search"
+                          url="companydetails/get_all_company_details_for_search">
+                        </app-select>
+                        <div [hidden]="cd_id_searchx.valid || cd_id_searchx.pristine"
+                          class="text-danger">
+                          {{ app.text.select || 'select' }} {{ app.text.cd_id || 'cd_id' }} </div>
+                      </fieldset> -->
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label class="font-weight-normal">{{ app.text.per_page || 'per_page' }}<span
+                            class="required"></span></label>
+                        <select class="custom-select form-control" id="num_per_page" required [(ngModel)]="num_per_page"
+                          name="num_per_page" (change)="onChangePage()">
+                          <option value="5">5</option>
+                          <option value="10">10</option>
+                          <option value="25">25</option>
+                          <option value="50">50</option>
+                          <option value="100">100</option>
+                          <option value="200">200</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <label for="search">{{ app.text.search || 'search' }}</label>
+                        <app-text-field [(ngModel)]="search" 
+                        type="text" view="input"
+                        placeholder="{{ app.text.search || 'search' }} {{ app.text.here || 'here' }}" 
+                        name="search" cId="search" 
+                        #searchx="ngModel" 
+                        required="false"></app-text-field>
+                        <div [hidden]="searchx.valid" class="text-danger"> {{ app.text.search || 'search' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                       </fieldset>
+                    </div>
+
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block pull-right waves-effect" [disabled]="!searchForm.form.valid"
+                          style="margin-top: 30px">{{ app.text.search || 'search' }}</button>
+                      </div>
+                    </div>
+
+                  </div>
+                </form>
+
+              </div>
+              <div class="col-md-12">
+                <div class="body table-responsive">
+                  <table class="table table-bordered" id="table">
+                    <thead>
+                      <tr>
+                        <th> #</th>
+                        <th>{{ app.text.c_location || 'c_location' }}</th>
+                        <th>{{ app.text.c_location_headofficer_name || 'c_location_headofficer_name' }}</th>
+                        <!-- <th>{{ app.text.products_ordered || 'products_ordered' }}</th> -->
+                        <th>{{ app.text.c_company_name || 'c_company_name' }}</th>
+                        <!-- <th>{{ app.text.order_delivery_address || 'order_delivery_address' }}</th> -->
+                        <!-- <th>{{ app.text.order_price || 'order_price' }}</th>
+                        <th>{{ app.text.order_tax || 'order_tax' }}</th> -->
+                        <th>{{ app.text.c_city || 'c_city' }}</th>
+                        <th>{{ app.text.c_country || 'c_country' }}</th>
+                        <th>{{ app.text.c_log || 'c_log' }}</th>
+                        <th>{{ app.text.action || 'action' }}</th>
+                        <!-- <th>{{ app.text.action || 'action' }}</th> -->
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let listItem of companys;let i=index">
+                        <td>{{i+1}}</td>
+                        <td>{{listItem.c_location}}</td>
+                        <!-- <td>{{listItem.order_user_id}}</td> -->
+                        <!-- <td>{{listItem.products_ordered}}</td> -->
+                        <td>{{listItem.c_location_headofficer_name}}</td>
+                        <!-- <td>{{listItem.order_delivery_address}}</td>
+                        <td>{{listItem.order_price}}</td>
+                        <td>{{listItem.order_tax}}</td> -->
+                        <td>{{listItem.c_company_name}}</td>
+                        <td>{{listItem.c_city}}</td>
+                        <td>{{listItem.c_country}}</td>
+                        <!-- <td>{{listItem.order_delivery_status}}</td> -->
+                        <!-- <td>{{listItem.order_delivery_notes}}</td>
+                        <td>{{listItem.order_upload_invoice}}</td>
+                        <td>{{listItem.order_active}}</td> -->
+                        <td>{{convertToDateTime(listItem.c_log)}}</td>
+                      
+                        <td><a (click)="editItem(listItem)" style="cursor: pointer;">{{ app.text.edit || 'edit' }}</a>
+                        </td>
+                        <td><a (click)="deleteItem(listItem.c_id)" style="cursor: pointer;">{{ app.text.delete || 'delete' }}</a>
+                          <td><a (click)="print(listItem)" class="print" style="cursor: pointer;">{{ app.text.print || 'print' }}</a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <button class="btn btn-primary btn-block" *ngIf="start_from+received != count && companys.length > 0"
+                  (click)="moveNext()"><span class="float-left"> {{displayCount}} </span> <span class="float-right">{{
+                    app.text.load_more || 'load_more' }}..</span></button>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<div class="modal fade" id="myModalc_id" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <form (ngSubmit)="onSubmit()" #baseForm="ngForm">
+        <div class="modal-header">
+          <h4 class="title" id="largeModalLabelc_id" *ngIf="company.c_id == '-1'">
+            {{ app.text.add || 'add' }}
+          </h4>
+          <h4 class="title" id="largeModalLabelc_id" *ngIf="company.c_id != '-1'">
+            {{ app.text.edit || 'edit' }}
+          </h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+
+              <fieldset class="form-group">
+                <label for="c_location">{{ app.text.c_location || 'c_location' }}</label>
+                <app-text-field [(ngModel)]="company.c_location" type="text" view="name"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.c_location || 'c_location' }}"
+                  name="c_location" cId="c_location" #c_location="ngModel" required="false"></app-text-field>
+                <div [hidden]="c_location.valid" class="text-danger"> {{ app.text.c_location || 'c_location' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+             
+              
+              <fieldset class="form-group">
+                <label for="c_location_headofficer_name">{{ app.text.c_location_headofficer_name || 'c_location_headofficer_name' }}</label>
+                <app-text-field [(ngModel)]="company.c_location_headofficer_name" type="text" view="name"
+                placeholder="{{ app.text.enter || 'enter' }} {{ app.text.c_location_headofficer_name || 'c_location_headofficer_name' }}"
+                name="c_location_headofficer_name" cId="c_location_headofficer_name" #c_location_headofficer_name="ngModel" required="false"></app-text-field>
+                <div [hidden]="c_location_headofficer_name.valid || c_location_headofficer_name.pristine" class="text-danger"> {{
+                  app.text.c_location_headofficer_name || 'c_location_headofficer_name' }} {{ app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <label for="c_company_name">{{ app.text.c_company_name || 'c_company_name' }}</label>
+                <app-text-field [(ngModel)]="company.c_company_name" type="text" view="name"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.c_company_name || 'c_company_name' }}"
+                  name="c_company_name" cId="c_company_name" #c_company_name="ngModel" required="false"></app-text-field>
+                <div [hidden]="c_company_name.valid" class="text-danger"> {{ app.text.c_company_name || 'c_company_name' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+               <fieldset class="form-group">
+                <label for="c_city">{{ app.text.c_city || 'c_city' }}</label>
+                <app-text-field [(ngModel)]="company.c_city" type="text" view="age"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.c_city || 'c_city' }}"
+                  name="c_city" cId="c_city" #c_city="ngModel" required="false"></app-text-field>
+                <div [hidden]="c_city.valid" class="text-danger"> {{ app.text.c_city || 'c_city' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <label for="c_country">{{ app.text.c_country || 'c_country' }}</label>
+                <app-text-field [(ngModel)]="company.c_country" type="text" view="age"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.c_country || 'c_country' }}"
+                  name="c_country" cId="c_country" #c_country="ngModel" required="false"></app-text-field>
+                <div [hidden]="c_country.valid" class="text-danger"> {{ app.text.c_country || 'c_country' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <label for="c_active">{{ app.text.c_active || 'c_active' }}</label>
+                <select class="form-control" id="c_active" [(ngModel)]="company.c_active"
+                  name="c_active" #c_active="ngModel" required>
+                  <option value="Y">{{ app.text.yes || 'yes' }}</option>
+                  <option value="N">{{ app.text.no || 'no' }}</option>
+                </select>
+              </fieldset>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary btn-round waves-effect" [disabled]="!baseForm.form.valid"
+            *ngIf="loadingText == 'Save'">
+            {{ app.text.save || 'save' }}
+          </button>
+          <button type="submit" class="btn btn-primary btn-round waves-effect" disabled *ngIf="loadingText != 'Save'">
+            {{ app.text.saving || 'saving' }}
+          </button>
+          <button type="button" class="btn btn-danger btn-round waves-effect" data-dismiss="modal">{{ app.text.cancel ||
+            'cancel' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

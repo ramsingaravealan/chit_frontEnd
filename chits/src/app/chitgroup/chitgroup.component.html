@@ -1,0 +1,2431 @@
+<section class="content">
+  <div class="block-header">
+    <div class="row">
+      <div class="col-lg-7 col-md-6 col-sm-12">
+        <h2>{{ app.text.chitgroup || 'chitgroup' }}
+          <small class="text-muted"></small>
+        </h2>
+      </div>
+      <div class="col-lg-5 col-md-6 col-sm-12">
+        <button class="btn btn-primary btn-icon btn-round hidden-sm-down float-right m-l-10" type="button"
+          (click)="add()">
+          <i class="zmdi zmdi-plus"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row clearfix">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="body">
+            <h2 class="card-inside-title"></h2>
+            <div class="row clearfix">
+              <div class="col-md-12">
+                <form (ngSubmit)="onSearchSubmit()" #searchForm="ngForm">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label class="font-weight-normal">{{ app.text.per_page || 'per_page' }}<span
+                            class="required"></span></label>
+                        <select class="custom-select form-control" id="num_per_page" required [(ngModel)]="num_per_page"
+                          name="num_per_page">
+                          <option chitgroup="5">5</option>
+                          <option chitgroup="10">10</option>
+                          <option chitgroup="25">25</option>
+                          <option chitgroup="50">50</option>
+                          <option chitgroup="100">100</option>
+                          <option chitgroup="200">200</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <label for="search">{{ app.text.search || 'search' }}</label>
+                        <app-text-field [(ngModel)]="search" type="text" view="input"
+                          placeholder="{{ app.text.search || 'search' }} {{ app.text.here || 'here' }}" name="search"
+                          cId="search" #searchx="ngModel" required="false"></app-text-field>
+                        <div [hidden]="searchx.valid" class="text-danger"> {{ app.text.search || 'search' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block pull-right waves-effect"
+                          [disabled]="!searchForm.form.valid" style="margin-top: 30px">{{ app.text.search || 'search'
+                          }}</button>
+                      </div>
+                    </div>
+
+                  </div>
+                </form>
+
+              </div>
+              <div class="col-md-12">
+                <div class="body table-responsive">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th> #</th>
+                        <th> Chit Group Name</th>
+                        <th> Chit Scheme </th>
+                        <th> Chit chitvalue</th>
+                        <!-- <th>{{ app.text.ac_no_of_members || 'ac_no_of_members' }}</th> -->
+                        <!-- <th>{{ app.text.ac_no_of_installment || 'ac_no_of_installment' }}</th>
+                        <th>{{ app.text.ac_log || 'ac_log' }}</th> -->
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- <div *ngIf="cg_id >0; else elseBlock"> -->
+                        <tr *ngFor="let listItem of chitgroups;let i=index">
+                          <td>{{i+1}}</td>
+                          <td>{{listItem.cg_group_name}}</td>
+                          <td>{{listItem.cs_chit_scheme}}</td>
+                         <td>{{listItem.cv_chit_value}}</td>
+                          <!-- <td>{{listItem.ac_chit_scheme}}</td>
+                          <td>{{convertToDateTime(listItem.ac_log)}}</td> -->
+                          <td><a (click)="editItem(listItem)" style="cursor: pointer;"><img src="assets/images/edit.png" width="20" height="20"></a><span><a (click)="deleteItem(listItem.cg_id)" style="cursor: pointer;"><img src="assets/images/delete.png" width="20" height="20"></a></span>
+                            
+                          </td>
+                        </tr>
+                      <!-- </div> -->
+                      
+                      <!-- <ng-template #elseBlock>  
+                        No Records are available 
+                        </ng-template> -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <button class="btn btn-primary btn-block" *ngIf="start_from+received != count && chitgroups.length > 0"
+                  (click)="moveNext()"><span class="float-left"> {{displayCount}} </span> <span class="float-right">{{
+                    app.text.load_more || 'load_more' }}..</span></button>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<div class="modal fade" id="myModalcg_id" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <form (ngSubmit)="onSubmit()" #baseForm="ngForm">
+        <div class="modal-header">
+          <h4 class="title" id="largeModalLabelcg_id" *ngIf="chitgroup.cg_id == '-1'">
+            {{ app.text.add || 'Add' }}
+          </h4>
+          <h4 class="title" id="largeModalLabelcg_id" *ngIf="chitgroup.cg_id != '-1'">
+            {{ app.text.edit || 'Edit' }}
+          </h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+
+
+          <!-- <fieldset class="form-group">
+            <label for="cs_chit_scheme">{{ app.text.cs_chit_scheme || 'cs_chit_scheme' }}</label>
+            <app-text-field [(ngModel)]="scheme.cs_chit_scheme" type="text" view="input"
+              placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cs_chit_scheme || 'cs_chit_scheme' }}" name="cs_chit_scheme"
+              cId="cs_chit_scheme" #cs_chit_scheme="ngModel" required="false" ></app-text-field>
+            <div [hidden]="cs_chit_scheme.valid" class="text-danger"> {{ app.text.cs_chit_scheme || 'cs_chit_scheme' }} {{
+              app.text.is_required || 'is_required' }}
+            </div>
+          </fieldset> -->
+        
+
+              <fieldset class="form-group">
+                <!-- <label for="cg_group_name">{{ app.text.cg_group_name || 'cg_group_name' }}</label> -->
+                <label>Group Name</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_group_name" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_group_name || 'cg_group_name' }}"  name="cg_group_name" 
+                  cId="cg_group_name" #cg_group_name="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_group_name.valid" class="text-danger"> {{ app.text.cg_group_name || 'cg_group_name' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+
+             
+
+              <fieldset class="form-group">
+                 
+                <label>Chit Scheme </label>
+                <app-select cId="cg_chit_scheme_id" name="cg_chit_scheme_id" #cg_chit_scheme_id="ngModel" placeholder="{{app.text.select || 'select'}} {{app.text.cg_chit_scheme_id || 'cg_chit_scheme_id'}}" [(ngModel)]="chitgroup.cg_chit_scheme_id" required="false"                                                                          
+                [payload]="cg_chit_scheme_id_payload"
+                        url="chitgroup/get_all_chitscheme" selectedUrl="chitgroup/get_selected_chitscheme"></app-select>
+                <div [hidden]="cg_chit_scheme_id.valid || cg_chit_scheme_id.pristine"
+                  class="text-danger">
+                  {{ app.text.select || 'select' }} {{ app.text.cg_chit_scheme_id || 'cg_chit_scheme_id' }} </div>
+              </fieldset>
+
+                
+              <!-- <fieldset class="form-group">
+                <!-- <label>{{ app.text.ac_chit_scheme || 'ac_chit_scheme' }}</label> -->
+               <!---- <label for="">Chit Scheme</label>
+                <select class="form-control input-lg"  [(ngModel)]="chitgroup.cg_chit_scheme_id" name="cg_chit_scheme_id"  style="width:100%" (change)="onChitschemeIdChanged($event.target.value)" >
+                  <option value="-1">Select</option>
+                  <option *ngFor='let scheme of schemes'  [value]="scheme.cs_chit_scheme">{{ scheme.cs_chit_scheme }}</option>
+                </select>
+              </fieldset> -->
+              <!-- <fieldset class="form-group">
+              
+                <label>Chit Month</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_month" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_month || 'cg_chit_month' }}"  name="cg_chit_month" 
+                  cId="cg_chit_month" #cg_chit_month="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_month.valid" class="text-danger"> {{ app.text.cg_chit_month || 'cg_chit_month' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset> -->
+              <fieldset class="form-group">
+                <!-- <label for="cg_group_name">{{ app.text.cg_group_name || 'cg_group_name' }}</label> -->
+                <label>Chit Members</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_members" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_members || 'cg_chit_members' }}"  name="cg_chit_members" 
+                  cId="cg_chit_members" #cg_chit_members="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_members.valid" class="text-danger"> {{ app.text.cg_chit_members || 'cg_chit_members' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+
+              <!-- <fieldset class="form-group">
+               
+                <label>Chit Month </label>
+                <app-select cId="cg_chit_scheme_id" name="cg_chit_scheme_id" #cg_chit_scheme_id="ngModel" placeholder="{{app.text.select || 'select'}} {{app.text.cg_chit_scheme_id || 'cg_chit_scheme_id'}}" [(ngModel)]="chitgroup.cg_chit_scheme_id" required="false"                                                                          
+                [payload]="cg_chit_scheme_id_payload"
+                        url="chitgroup/get_all_chitscheme" selectedUrl="chitgroup/get_selected_chitscheme"></app-select>
+                <div [hidden]="cg_chit_scheme_id.valid || cg_chit_scheme_id.pristine"
+                  class="text-danger">
+                  {{ app.text.select || 'select' }} {{ app.text.cg_chit_scheme_id || 'cg_chit_scheme_id' }} </div>
+              </fieldset> -->
+              
+               <fieldset class="form-group">
+                 <!-- <label>{{ app.text.cg_chit_value_id || 'cg_chit_value_id' }}</label> -->
+                <label>Chit Value</label>
+                 <app-select cId="cg_chit_value_id" name="cg_chit_value_id"
+                  placeholder="{{ app.text.select || 'select' }} {{ app.text.cg_chit_value_id || 'cg_chit_value_id' }}"
+                  [(ngModel)]="chitgroup.cg_chit_value_id" required="false" #cg_chit_value_id="ngModel"
+                  [payload]="cg_chit_value_id_payload"
+                  url="chitgroup/get_all_chitvalue" selectedUrl="chitgroup/get_selected_chitvalue">
+                </app-select>
+                <div [hidden]="cg_chit_value_id.valid || cg_chit_value_id.pristine"
+                  class="text-danger">
+                  {{ app.text.select || 'select' }} {{ app.text.cg_chit_value_id || 'cg_chit_value_id' }} </div> 
+                 
+
+                
+              </fieldset> 
+              
+              <!-- <fieldset class="form-group">
+                <label for="ac_name">Chit Value</label>
+                <select class="form-control input-lg"  [(ngModel)]="chitgroup.cg_chit_value_id" name="cg_chit_value_id"  style="width:100%" (change)="firstDropDownChanged($event.target.value)" >
+                  <option value="-1">Select</option>
+                  <option *ngFor='let value of values'  [value]="value.cv_chit_value">{{ value.cv_chit_value }}</option>
+                </select>
+              </fieldset> -->
+               
+              <!-- <fieldset class="form-group">
+                <label>Click If it need max installment for 21</label>
+                <input class="form-check-input" type="checkbox"   id="flexSwitchCheckChecked" 
+                (change)="toggleButton()" >
+              </fieldset> -->
+              <!-----------------------------chit month 1-->
+              <div *ngIf="chitgroup.cg_chit_month=='1'">
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                        <label> </label>
+                        <app-text-field [(ngModel)]="chitgroup.cg_chit_no_1" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }}"  name="cg_chit_no_1" 
+                          cId="cg_chit_no_1" #cg_chit_no_1="ngModel" required="false" ></app-text-field>
+                        <div [hidden]="cg_chit_no_1.valid" class="text-danger"> {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                        <label>Max Installment_1</label>
+                        <app-text-field [(ngModel)]="chitgroup.cg_max_installment_1" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }}"  name="cg_max_installment_1" 
+                          cId="cg_max_installment_1" #cg_max_installment_1="ngModel" required="false" ></app-text-field>
+                        <div [hidden]="cg_max_installment_1.valid" class="text-danger"> {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+              
+               
+              </div>
+              <!-------------chit month 2----------------------------------->
+              <div *ngIf="chitgroup.cg_chit_month=='2'">
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                        <label></label>
+                        <app-text-field [(ngModel)]="chitgroup.cg_chit_no_1" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.chit_no_1 || 'chit_no_1' }}"  name="cg_chit_no_1" 
+                          cId="cg_chit_no_1" #cg_chit_no_1="ngModel" required="false" ></app-text-field>
+                        <div [hidden]="cg_chit_no_1.valid" class="text-danger"> {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                        <label>Max Installment_1</label>
+                        <app-text-field [(ngModel)]="chitgroup.cg_max_installment_1" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }}"  name="cg_max_installment_1" 
+                          cId="cg_max_installment_1" #cg_max_installment_1="ngModel" required="false" ></app-text-field>
+                        <div [hidden]="cg_max_installment_1.valid" class="text-danger"> {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                        <label></label>
+                        <app-text-field [(ngModel)]="chitgroup.cg_chit_no_2" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.chit_no_2 || 'chit_no_2' }}"  name="cg_chit_no_2" 
+                          cId="cg_chit_no_2" #cg_chit_no_2="ngModel" required="false" ></app-text-field>
+                        <div [hidden]="cg_chit_no_2.valid" class="text-danger"> {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                        <label>Max Installment_2</label>
+                        <app-text-field [(ngModel)]="chitgroup.cg_max_installment_2" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }}"  name="cg_max_installment_2" 
+                          cId="cg_max_installment_2" #cg_max_installment_2="ngModel" required="false" ></app-text-field>
+                        <div [hidden]="cg_max_installment_2.valid" class="text-danger"> {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+                
+               
+                
+                
+              </div>
+              <!---------------------chit month 3----------------->
+              <div *ngIf="chitgroup.cg_chit_month=='3'">
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                        <label> </label>
+                        <app-text-field [(ngModel)]="chitgroup.cg_chit_no_1" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }}"  name="cg_chit_no_1" 
+                          cId="cg_chit_no_1" #cg_chit_no_1="ngModel" required="false" ></app-text-field>
+                        <div [hidden]="cg_chit_no_1.valid" class="text-danger"> {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                        <label>Max Installment_1</label>
+                        <app-text-field [(ngModel)]="chitgroup.cg_max_installment_1" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }}"  name="cg_max_installment_1" 
+                          cId="cg_max_installment_1" #cg_max_installment_1="ngModel" required="false" ></app-text-field>
+                        <div [hidden]="cg_max_installment_1.valid" class="text-danger"> {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                        <label> </label>
+                        <app-text-field [(ngModel)]="chitgroup.cg_chit_no_2" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }}"  name="cg_chit_no_2" 
+                          cId="cg_chit_no_2" #cg_chit_no_2="ngModel" required="false" ></app-text-field>
+                        <div [hidden]="cg_chit_no_2.valid" class="text-danger"> {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                        <label>Max Installment_2</label>
+                        <app-text-field [(ngModel)]="chitgroup.cg_max_installment_2" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }}"  name="cg_max_installment_2" 
+                          cId="cg_max_installment_2" #cg_max_installment_2="ngModel" required="false" ></app-text-field>
+                        <div [hidden]="cg_max_installment_2.valid" class="text-danger"> {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                        <label> </label>
+                        <app-text-field [(ngModel)]="chitgroup.cg_chit_no_3" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }}"  name="cg_chit_no_3" 
+                          cId="cg_chit_no_3" #cg_chit_no_3="ngModel" required="false" ></app-text-field>
+                        <div [hidden]="cg_chit_no_3.valid" class="text-danger"> {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                        <label>Max Installment_3</label>
+                        <app-text-field [(ngModel)]="chitgroup.cg_max_installment_3" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }}"  name="cg_max_installment_3" 
+                          cId="cg_max_installment_3" #cg_max_installment_3="ngModel" required="false" ></app-text-field>
+                        <div [hidden]="cg_max_installment_3.valid" class="text-danger"> {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+                
+               
+                
+               
+              
+               
+              </div>
+             <!-----------------------------------------------------------------------chit month 4-->
+             <div *ngIf="chitgroup.cg_chit_month=='4'">
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label> </label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_chit_no_1" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.chit_no_1 || 'chit_no_1' }}"  name="cg_chit_no_1" 
+                        cId="cg_chit_no_1" #cg_chit_no_1="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_chit_no_1.valid" class="text-danger"> {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label>Max Installment_1</label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_max_installment_1" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }}"  name="cg_max_installment_1" 
+                        cId="cg_max_installment_1" #cg_max_installment_1="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_max_installment_1.valid" class="text-danger"> {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label> </label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_chit_no_2" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.chit_no_2 || 'chit_no_2' }}"  name="cg_chit_no_2" 
+                        cId="cg_chit_no_2" #cg_chit_no_2="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_chit_no_2.valid" class="text-danger"> {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label>Max Installment_2</label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_max_installment_2" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }}"  name="cg_max_installment_2" 
+                        cId="cg_max_installment_2" #cg_max_installment_2="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_max_installment_2.valid" class="text-danger"> {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label> </label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_chit_no_3" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.chit_no_3 || 'chit_no_3' }}"  name="cg_chit_no_3" 
+                        cId="cg_chit_no_3" #cg_chit_no_3="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_chit_no_3.valid" class="text-danger"> {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label>Max Installment_3</label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_max_installment_3" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }}"  name="cg_max_installment_3" 
+                        cId="cg_max_installment_3" #cg_max_installment_3="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_max_installment_3.valid" class="text-danger"> {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label> </label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_chit_no_4" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.chit_no_4 || 'chit_no_4' }}"  name="cg_chit_no_4" 
+                        cId="cg_chit_no_4" #cg_chit_no_4="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_chit_no_4.valid" class="text-danger"> {{ app.text.cg_chit_no_4 || 'cg_chit_no_4' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label>Max Installment_4</label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_max_installment_4" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }}"  name="cg_max_installment_4" 
+                        cId="cg_max_installment_4" #cg_max_installment_4="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_max_installment_4.valid" class="text-danger"> {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+             
+             
+             
+             
+              
+             
+            
+           
+             </div>
+             <!----------------------------------------------------chit month 5---------------------->
+             <div *ngIf="chitgroup.cg_chit_month=='5'">
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label></label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_chit_no_1" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.chit_no_1 || 'chit_no_1' }}"  name="cg_chit_no_1" 
+                        cId="cg_chit_no_1" #cg_chit_no_1="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_chit_no_1.valid" class="text-danger"> {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label>Max Installment_1</label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_max_installment_1" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }}"  name="cg_max_installment_1" 
+                        cId="cg_max_installment_1" #cg_max_installment_1="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_max_installment_1.valid" class="text-danger"> {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label></label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_chit_no_2" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.chit_no_2 || 'chit_no_2' }}"  name="cg_chit_no_2" 
+                        cId="cg_chit_no_2" #cg_chit_no_2="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_chit_no_2.valid" class="text-danger"> {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label>Max Installment_2</label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_max_installment_2" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }}"  name="cg_max_installment_2" 
+                        cId="cg_max_installment_2" #cg_max_installment_2="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_max_installment_2.valid" class="text-danger"> {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label></label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_chit_no_3" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.chit_no_3 || 'chit_no_3' }}"  name="cg_chit_no_3" 
+                        cId="cg_chit_no_3" #cg_chit_no_3="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_chit_no_3.valid" class="text-danger"> {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label>Max Installment_3</label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_max_installment_3" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }}"  name="cg_max_installment_3" 
+                        cId="cg_max_installment_3" #cg_max_installment_3="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_max_installment_3.valid" class="text-danger"> {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label> </label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_chit_no_4" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.chit_no_4 || 'chit_no_4' }}"  name="cg_chit_no_4" 
+                        cId="cg_chit_no_4" #cg_chit_no_4="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_chit_no_4.valid" class="text-danger"> {{ app.text.cg_chit_no_4 || 'cg_chit_no_4' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label>Max Installment_4</label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_max_installment_4" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }}"  name="cg_max_installment_4" 
+                        cId="cg_max_installment_4" #cg_max_installment_4="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_max_installment_4.valid" class="text-danger"> {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label> </label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_chit_no_5" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.chit_no_5 || 'chit_no_5' }}"  name="cg_chit_no_5" 
+                        cId="cg_chit_no_5" #cg_chit_no_5="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_chit_no_5.valid" class="text-danger"> {{ app.text.cg_chit_no_5 || 'cg_chit_no_5' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label>Max Installment_5</label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_max_installment_5" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_5 || 'cg_max_installment_5' }}"  name="cg_max_installment_5" 
+                        cId="cg_max_installment_5" #cg_max_installment_5="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_max_installment_5.valid" class="text-danger"> {{ app.text.cg_max_installment_5 || 'cg_max_installment_5' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+             
+              
+             
+            
+              
+             
+             
+             
+           
+            
+            </div>
+            <!------------------------------------------------------chit month 6------------------------>
+            <div *ngIf="chitgroup.cg_chit_month=='6'">
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label> </label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_chit_no_1" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }}"  name="cg_chit_no_1" 
+                        cId="cg_chit_no_1" #cg_chit_no_1="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_chit_no_1.valid" class="text-danger"> {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label>Max Installment_1</label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_max_installment_1" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }}"  name="cg_max_installment_1" 
+                        cId="cg_max_installment_1" #cg_max_installment_1="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_max_installment_1.valid" class="text-danger"> {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label> </label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_chit_no_2" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }}"  name="cg_chit_no_2" 
+                        cId="cg_chit_no_2" #cg_chit_no_2="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_chit_no_2.valid" class="text-danger"> {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label>Max Installment_2</label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_max_installment_2" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }}"  name="cg_max_installment_2" 
+                        cId="cg_max_installment_2" #cg_max_installment_2="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_max_installment_2.valid" class="text-danger"> {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label> </label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_chit_no_3" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }}"  name="cg_chit_no_3" 
+                        cId="cg_chit_no_3" #cg_chit_no_3="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_chit_no_3.valid" class="text-danger"> {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label>Max Installment_3</label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_max_installment_3" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }}"  name="cg_max_installment_3" 
+                        cId="cg_max_installment_3" #cg_max_installment_3="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_max_installment_3.valid" class="text-danger"> {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label> </label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_chit_no_4" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_4 || 'cg_chit_no_4' }}"  name="cg_chit_no_4" 
+                        cId="cg_chit_no_4" #cg_chit_no_4="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_chit_no_4.valid" class="text-danger"> {{ app.text.cg_chit_no_4 || 'cg_chit_no_4' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label>Max Installment_4</label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_max_installment_4" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }}"  name="cg_max_installment_4" 
+                        cId="cg_max_installment_4" #cg_max_installment_4="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_max_installment_4.valid" class="text-danger"> {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label> </label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_chit_no_5" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_5 || 'cg_chit_no_5' }}"  name="cg_chit_no_5" 
+                        cId="cg_chit_no_5" #cg_chit_no_5="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_chit_no_5.valid" class="text-danger"> {{ app.text.cg_chit_no_5 || 'cg_chit_no_5' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label>Max Installment_5</label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_max_installment_5" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_5 || 'cg_max_installment_5' }}"  name="cg_max_installment_5" 
+                        cId="cg_max_installment_5" #cg_max_installment_5="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_max_installment_5.valid" class="text-danger"> {{ app.text.cg_max_installment_5 || 'cg_max_installment_5' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="row">
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label> </label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_chit_no_6" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_6 || 'cg_chit_no_6' }}"  name="cg_chit_no_6" 
+                        cId="cg_chit_no_6" #cg_chit_no_6="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_chit_no_6.valid" class="text-danger"> {{ app.text.cg_chit_no_6 || 'cg_chit_no_6' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                  <div class="col-md-6">
+                    <fieldset class="form-group">
+                      <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                      <label>Max Installment_6</label>
+                      <app-text-field [(ngModel)]="chitgroup.cg_max_installment_6" type="text" view="input"
+                        placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_6 || 'cg_max_installment_6' }}"  name="cg_max_installment_6" 
+                        cId="cg_max_installment_6" #cg_max_installment_6="ngModel" required="false" ></app-text-field>
+                      <div [hidden]="cg_max_installment_6.valid" class="text-danger"> {{ app.text.cg_max_installment_6 || 'cg_max_installment_6' }} {{
+                        app.text.is_required || 'is_required' }}
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+             
+              
+           
+             
+            
+             
+             
+              
+             
+              
+             
+            
+            </div>
+            <!----------------------------------------------------------------chit month 7------------->
+            <div *ngIf="chitgroup.cg_chit_month=='7'">
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 1</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_1" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }}"  name="cg_chit_no_1" 
+                  cId="cg_chit_no_1" #cg_chit_no_1="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_1.valid" class="text-danger"> {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 2</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_2" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }}"  name="cg_chit_no_2" 
+                  cId="cg_chit_no_2" #cg_chit_no_2="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_2.valid" class="text-danger"> {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 3</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_3" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }}"  name="cg_chit_no_3" 
+                  cId="cg_chit_no_3" #cg_chit_no_3="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_3.valid" class="text-danger"> {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 4</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_4" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_4 || 'cg_chit_no_4' }}"  name="cg_chit_no_4" 
+                  cId="cg_chit_no_4" #cg_chit_no_4="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_4.valid" class="text-danger"> {{ app.text.cg_chit_no_4 || 'cg_chit_no_4' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 5</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_5" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_5 || 'cg_chit_no_5' }}"  name="cg_chit_no_5" 
+                  cId="cg_chit_no_5" #cg_chit_no_5="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_5.valid" class="text-danger"> {{ app.text.cg_chit_no_5 || 'cg_chit_no_5' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 6</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_6" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_6 || 'cg_chit_no_6' }}"  name="cg_chit_no_6" 
+                  cId="cg_chit_no_6" #cg_chit_no_6="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_6.valid" class="text-danger"> {{ app.text.cg_chit_no_6 || 'cg_chit_no_6' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 7</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_7" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_7 || 'cg_chit_no_7' }}"  name="cg_chit_no_7" 
+                  cId="cg_chit_no_7" #cg_chit_no_7="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_7.valid" class="text-danger"> {{ app.text.cg_chit_no_7 || 'cg_chit_no_7' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_1</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_1" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }}"  name="cg_max_installment_1" 
+                  cId="cg_max_installment_1" #cg_max_installment_1="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_1.valid" class="text-danger"> {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_2</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_2" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }}"  name="cg_max_installment_2" 
+                  cId="cg_max_installment_2" #cg_max_installment_2="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_2.valid" class="text-danger"> {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_3</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_3" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }}"  name="cg_max_installment_3" 
+                  cId="cg_max_installment_3" #cg_max_installment_3="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_3.valid" class="text-danger"> {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_4</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_4" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }}"  name="cg_max_installment_4" 
+                  cId="cg_max_installment_4" #cg_max_installment_4="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_4.valid" class="text-danger"> {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_5</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_5" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_5 || 'cg_max_installment_5' }}"  name="cg_max_installment_5" 
+                  cId="cg_max_installment_5" #cg_max_installment_5="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_5.valid" class="text-danger"> {{ app.text.cg_max_installment_5 || 'cg_max_installment_5' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_6</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_6" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_6 || 'cg_max_installment_6' }}"  name="cg_max_installment_6" 
+                  cId="cg_max_installment_6" #cg_max_installment_6="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_6.valid" class="text-danger"> {{ app.text.cg_max_installment_6 || 'cg_max_installment_6' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_7</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_7" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_7 || 'cg_max_installment_7' }}"  name="cg_max_installment_7" 
+                  cId="cg_max_installment_7" #cg_max_installment_7="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_7.valid" class="text-danger"> {{ app.text.cg_max_installment_7 || 'cg_max_installment_7' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+            </div>
+            <!-------------------------------------------------------chit month 8----------------------->
+            <div *ngIf="chitgroup.cg_chit_month=='8'">
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 1</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_1" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }}"  name="cg_chit_no_1" 
+                  cId="cg_chit_no_1" #cg_chit_no_1="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_1.valid" class="text-danger"> {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 2</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_2" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }}"  name="cg_chit_no_2" 
+                  cId="cg_chit_no_2" #cg_chit_no_2="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_2.valid" class="text-danger"> {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 3</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_3" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }}"  name="cg_chit_no_3" 
+                  cId="cg_chit_no_3" #cg_chit_no_3="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_3.valid" class="text-danger"> {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 4</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_4" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_4 || 'cg_chit_no_4' }}"  name="cg_chit_no_4" 
+                  cId="cg_chit_no_4" #cg_chit_no_4="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_4.valid" class="text-danger"> {{ app.text.cg_chit_no_4 || 'cg_chit_no_4' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 5</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_5" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_5 || 'cg_chit_no_5' }}"  name="cg_chit_no_5" 
+                  cId="cg_chit_no_5" #cg_chit_no_5="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_5.valid" class="text-danger"> {{ app.text.cg_chit_no_5 || 'cg_chit_no_5' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 6</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_6" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_6 || 'cg_chit_no_6' }}"  name="cg_chit_no_6" 
+                  cId="cg_chit_no_6" #cg_chit_no_6="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_6.valid" class="text-danger"> {{ app.text.cg_chit_no_6 || 'cg_chit_no_6' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 7</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_7" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_7 || 'cg_chit_no_7' }}"  name="cg_chit_no_7" 
+                  cId="cg_chit_no_7" #cg_chit_no_7="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_7.valid" class="text-danger"> {{ app.text.cg_chit_no_7 || 'cg_chit_no_7' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 8</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_8" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_8 || 'cg_chit_no_8' }}"  name="cg_chit_no_8" 
+                  cId="cg_chit_no_8" #cg_chit_no_8="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_8.valid" class="text-danger"> {{ app.text.cg_chit_no_8 || 'cg_chit_no_8' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_1</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_1" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }}"  name="cg_max_installment_1" 
+                  cId="cg_max_installment_1" #cg_max_installment_1="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_1.valid" class="text-danger"> {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_2</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_2" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }}"  name="cg_max_installment_2" 
+                  cId="cg_max_installment_2" #cg_max_installment_2="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_2.valid" class="text-danger"> {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_3</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_3" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }}"  name="cg_max_installment_3" 
+                  cId="cg_max_installment_3" #cg_max_installment_3="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_3.valid" class="text-danger"> {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_4</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_4" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }}"  name="cg_max_installment_4" 
+                  cId="cg_max_installment_4" #cg_max_installment_4="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_4.valid" class="text-danger"> {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_5</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_5" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_5 || 'cg_max_installment_5' }}"  name="cg_max_installment_5" 
+                  cId="cg_max_installment_5" #cg_max_installment_5="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_5.valid" class="text-danger"> {{ app.text.cg_max_installment_5 || 'cg_max_installment_5' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_6</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_6" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_6 || 'cg_max_installment_6' }}"  name="cg_max_installment_6" 
+                  cId="cg_max_installment_6" #cg_max_installment_6="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_6.valid" class="text-danger"> {{ app.text.cg_max_installment_6 || 'cg_max_installment_6' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_7</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_7" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_7 || 'cg_max_installment_7' }}"  name="cg_max_installment_7" 
+                  cId="cg_max_installment_7" #cg_max_installment_7="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_7.valid" class="text-danger"> {{ app.text.cg_max_installment_7 || 'cg_max_installment_7' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_8</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_8" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_8 || 'cg_max_installment_8' }}"  name="cg_max_installment_8" 
+                  cId="cg_max_installment_8" #cg_max_installment_8="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_8.valid" class="text-danger"> {{ app.text.cg_max_installment_8 || 'cg_max_installment_8' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+             
+            </div>
+            <!----------------------------------------------------chit month 9------------------------------>
+            <div *ngIf="chitgroup.cg_chit_month=='9'">
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 1</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_1" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }}"  name="cg_chit_no_1" 
+                  cId="cg_chit_no_1" #cg_chit_no_1="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_1.valid" class="text-danger"> {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 2</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_2" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }}"  name="cg_chit_no_2" 
+                  cId="cg_chit_no_2" #cg_chit_no_2="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_2.valid" class="text-danger"> {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 3</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_3" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }}"  name="cg_chit_no_3" 
+                  cId="cg_chit_no_3" #cg_chit_no_3="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_3.valid" class="text-danger"> {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 4</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_4" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_4 || 'cg_chit_no_4' }}"  name="cg_chit_no_4" 
+                  cId="cg_chit_no_4" #cg_chit_no_4="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_4.valid" class="text-danger"> {{ app.text.cg_chit_no_4 || 'cg_chit_no_4' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 5</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_5" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_5 || 'cg_chit_no_5' }}"  name="cg_chit_no_5" 
+                  cId="cg_chit_no_5" #cg_chit_no_5="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_5.valid" class="text-danger"> {{ app.text.cg_chit_no_5 || 'cg_chit_no_5' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 6</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_6" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_6 || 'cg_chit_no_6' }}"  name="cg_chit_no_6" 
+                  cId="cg_chit_no_6" #cg_chit_no_6="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_6.valid" class="text-danger"> {{ app.text.cg_chit_no_6 || 'cg_chit_no_6' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 7</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_7" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_7 || 'cg_chit_no_7' }}"  name="cg_chit_no_7" 
+                  cId="cg_chit_no_7" #cg_chit_no_7="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_7.valid" class="text-danger"> {{ app.text.cg_chit_no_7 || 'cg_chit_no_7' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 8</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_8" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_8 || 'cg_chit_no_8' }}"  name="cg_chit_no_8" 
+                  cId="cg_chit_no_8" #cg_chit_no_8="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_8.valid" class="text-danger"> {{ app.text.cg_chit_no_8 || 'cg_chit_no_8' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 9</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_9" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_9 || 'cg_chit_no_9' }}"  name="cg_chit_no_9" 
+                  cId="cg_chit_no_9" #cg_chit_no_9="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_9.valid" class="text-danger"> {{ app.text.cg_chit_no_9 || 'cg_chit_no_9' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_1</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_1" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }}"  name="cg_max_installment_1" 
+                  cId="cg_max_installment_1" #cg_max_installment_1="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_1.valid" class="text-danger"> {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_2</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_2" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }}"  name="cg_max_installment_2" 
+                  cId="cg_max_installment_2" #cg_max_installment_2="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_2.valid" class="text-danger"> {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_3</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_3" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }}"  name="cg_max_installment_3" 
+                  cId="cg_max_installment_3" #cg_max_installment_3="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_3.valid" class="text-danger"> {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_4</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_4" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }}"  name="cg_max_installment_4" 
+                  cId="cg_max_installment_4" #cg_max_installment_4="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_4.valid" class="text-danger"> {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_5</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_5" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_5 || 'cg_max_installment_5' }}"  name="cg_max_installment_5" 
+                  cId="cg_max_installment_5" #cg_max_installment_5="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_5.valid" class="text-danger"> {{ app.text.cg_max_installment_5 || 'cg_max_installment_5' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_6</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_6" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_6 || 'cg_max_installment_6' }}"  name="cg_max_installment_6" 
+                  cId="cg_max_installment_6" #cg_max_installment_6="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_6.valid" class="text-danger"> {{ app.text.cg_max_installment_6 || 'cg_max_installment_6' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_7</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_7" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_7 || 'cg_max_installment_7' }}"  name="cg_max_installment_7" 
+                  cId="cg_max_installment_7" #cg_max_installment_7="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_7.valid" class="text-danger"> {{ app.text.cg_max_installment_7 || 'cg_max_installment_7' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_8</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_8" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_8 || 'cg_max_installment_8' }}"  name="cg_max_installment_8" 
+                  cId="cg_max_installment_8" #cg_max_installment_8="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_8.valid" class="text-danger"> {{ app.text.cg_max_installment_8 || 'cg_max_installment_8' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_9</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_9" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_9 || 'cg_max_installment_9' }}"  name="cg_max_installment_9" 
+                  cId="cg_max_installment_9" #cg_max_installment_9="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_9.valid" class="text-danger"> {{ app.text.cg_max_installment_9 || 'cg_max_installment_9' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+            </div>
+            <!-----------------------------------------chit month 10------------------------------------------->
+            <div *ngIf="chitgroup.cg_chit_month=='10'">
+              <div *ngIf="chitgroup.cg_chit_month=='10'">
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 1</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_1" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }}"  name="cg_chit_no_1" 
+                    cId="cg_chit_no_1" #cg_chit_no_1="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_1.valid" class="text-danger"> {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 2</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_2" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }}"  name="cg_chit_no_2" 
+                    cId="cg_chit_no_2" #cg_chit_no_2="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_2.valid" class="text-danger"> {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 3</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_3" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }}"  name="cg_chit_no_3" 
+                    cId="cg_chit_no_3" #cg_chit_no_3="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_3.valid" class="text-danger"> {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 4</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_4" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_4 || 'cg_chit_no_4' }}"  name="cg_chit_no_4" 
+                    cId="cg_chit_no_4" #cg_chit_no_4="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_4.valid" class="text-danger"> {{ app.text.cg_chit_no_4 || 'cg_chit_no_4' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 5</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_5" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_5 || 'cg_chit_no_5' }}"  name="cg_chit_no_5" 
+                    cId="cg_chit_no_5" #cg_chit_no_5="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_5.valid" class="text-danger"> {{ app.text.cg_chit_no_5 || 'cg_chit_no_5' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 6</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_6" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_6 || 'cg_chit_no_6' }}"  name="cg_chit_no_6" 
+                    cId="cg_chit_no_6" #cg_chit_no_6="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_6.valid" class="text-danger"> {{ app.text.cg_chit_no_6 || 'cg_chit_no_6' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 7</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_7" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_7 || 'cg_chit_no_7' }}"  name="cg_chit_no_7" 
+                    cId="cg_chit_no_7" #cg_chit_no_7="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_7.valid" class="text-danger"> {{ app.text.cg_chit_no_7 || 'cg_chit_no_7' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 8</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_8" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_8 || 'cg_chit_no_8' }}"  name="cg_chit_no_8" 
+                    cId="cg_chit_no_8" #cg_chit_no_8="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_8.valid" class="text-danger"> {{ app.text.cg_chit_no_8 || 'cg_chit_no_8' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 9</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_9" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_9 || 'cg_chit_no_9' }}"  name="cg_chit_no_9" 
+                    cId="cg_chit_no_9" #cg_chit_no_9="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_9.valid" class="text-danger"> {{ app.text.cg_chit_no_9 || 'cg_chit_no_9' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 10</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_10" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_10 || 'cg_chit_no_10' }}"  name="cg_chit_no_10" 
+                    cId="cg_chit_no_10" #cg_chit_no_10="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_10.valid" class="text-danger"> {{ app.text.cg_chit_no_10 || 'cg_chit_no_10' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_1</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_1" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }}"  name="cg_max_installment_1" 
+                    cId="cg_max_installment_1" #cg_max_installment_1="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_1.valid" class="text-danger"> {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_2</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_2" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }}"  name="cg_max_installment_2" 
+                    cId="cg_max_installment_2" #cg_max_installment_2="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_2.valid" class="text-danger"> {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_3</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_3" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }}"  name="cg_max_installment_3" 
+                    cId="cg_max_installment_3" #cg_max_installment_3="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_3.valid" class="text-danger"> {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_4</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_4" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }}"  name="cg_max_installment_4" 
+                    cId="cg_max_installment_4" #cg_max_installment_4="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_4.valid" class="text-danger"> {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_5</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_5" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_5 || 'cg_max_installment_5' }}"  name="cg_max_installment_5" 
+                    cId="cg_max_installment_5" #cg_max_installment_5="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_5.valid" class="text-danger"> {{ app.text.cg_max_installment_5 || 'cg_max_installment_5' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_6</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_6" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_6 || 'cg_max_installment_6' }}"  name="cg_max_installment_6" 
+                    cId="cg_max_installment_6" #cg_max_installment_6="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_6.valid" class="text-danger"> {{ app.text.cg_max_installment_6 || 'cg_max_installment_6' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_7</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_7" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_7 || 'cg_max_installment_7' }}"  name="cg_max_installment_7" 
+                    cId="cg_max_installment_7" #cg_max_installment_7="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_7.valid" class="text-danger"> {{ app.text.cg_max_installment_7 || 'cg_max_installment_7' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_8</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_8" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_8 || 'cg_max_installment_8' }}"  name="cg_max_installment_8" 
+                    cId="cg_max_installment_8" #cg_max_installment_8="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_8.valid" class="text-danger"> {{ app.text.cg_max_installment_8 || 'cg_max_installment_8' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_9</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_9" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_9 || 'cg_max_installment_9' }}"  name="cg_max_installment_9" 
+                    cId="cg_max_installment_9" #cg_max_installment_9="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_9.valid" class="text-danger"> {{ app.text.cg_max_installment_9 || 'cg_max_installment_9' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_10</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_10" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_10 || 'cg_max_installment_10' }}"  name="cg_max_installment_10" 
+                    cId="cg_max_installment_10" #cg_max_installment_10="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_10.valid" class="text-danger"> {{ app.text.cg_max_installment_10 || 'cg_max_installment_10' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+               
+              </div>
+            </div>
+            <!-----------------------------------------------chit month 11------------------------------------->
+            <div *ngIf="chitgroup.cg_chit_month=='11'">
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 1</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_1" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }}"  name="cg_chit_no_1" 
+                  cId="cg_chit_no_1" #cg_chit_no_1="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_1.valid" class="text-danger"> {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 2</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_2" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }}"  name="cg_chit_no_2" 
+                  cId="cg_chit_no_2" #cg_chit_no_2="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_2.valid" class="text-danger"> {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 3</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_3" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }}"  name="cg_chit_no_3" 
+                  cId="cg_chit_no_3" #cg_chit_no_3="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_3.valid" class="text-danger"> {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 4</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_4" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_4 || 'cg_chit_no_4' }}"  name="cg_chit_no_4" 
+                  cId="cg_chit_no_4" #cg_chit_no_4="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_4.valid" class="text-danger"> {{ app.text.cg_chit_no_4 || 'cg_chit_no_4' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 5</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_5" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_5 || 'cg_chit_no_5' }}"  name="cg_chit_no_5" 
+                  cId="cg_chit_no_5" #cg_chit_no_5="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_5.valid" class="text-danger"> {{ app.text.cg_chit_no_5 || 'cg_chit_no_5' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 6</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_6" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_6 || 'cg_chit_no_6' }}"  name="cg_chit_no_6" 
+                  cId="cg_chit_no_6" #cg_chit_no_6="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_6.valid" class="text-danger"> {{ app.text.cg_chit_no_6 || 'cg_chit_no_6' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 7</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_7" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_7 || 'cg_chit_no_7' }}"  name="cg_chit_no_7" 
+                  cId="cg_chit_no_7" #cg_chit_no_7="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_7.valid" class="text-danger"> {{ app.text.cg_chit_no_7 || 'cg_chit_no_7' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 8</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_8" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_8 || 'cg_chit_no_8' }}"  name="cg_chit_no_8" 
+                  cId="cg_chit_no_8" #cg_chit_no_8="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_8.valid" class="text-danger"> {{ app.text.cg_chit_no_8 || 'cg_chit_no_8' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 9</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_9" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_9 || 'cg_chit_no_9' }}"  name="cg_chit_no_9" 
+                  cId="cg_chit_no_9" #cg_chit_no_9="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_9.valid" class="text-danger"> {{ app.text.cg_chit_no_9 || 'cg_chit_no_9' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 10</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_10" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_10 || 'cg_chit_no_10' }}"  name="cg_chit_no_10" 
+                  cId="cg_chit_no_10" #cg_chit_no_10="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_10.valid" class="text-danger"> {{ app.text.cg_chit_no_10 || 'cg_chit_no_10' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Chit No 11</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_chit_no_11" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_11 || 'cg_chit_no_11' }}"  name="cg_chit_no_11" 
+                  cId="cg_chit_no_11" #cg_chit_no_11="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_chit_no_11.valid" class="text-danger"> {{ app.text.cg_chit_no_11 || 'cg_chit_no_11' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              
+              
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_1</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_1" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }}"  name="cg_max_installment_1" 
+                  cId="cg_max_installment_1" #cg_max_installment_1="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_1.valid" class="text-danger"> {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_2</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_2" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }}"  name="cg_max_installment_2" 
+                  cId="cg_max_installment_2" #cg_max_installment_2="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_2.valid" class="text-danger"> {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_3</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_3" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }}"  name="cg_max_installment_3" 
+                  cId="cg_max_installment_3" #cg_max_installment_3="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_3.valid" class="text-danger"> {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_4</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_4" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }}"  name="cg_max_installment_4" 
+                  cId="cg_max_installment_4" #cg_max_installment_4="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_4.valid" class="text-danger"> {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_5</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_5" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_5 || 'cg_max_installment_5' }}"  name="cg_max_installment_5" 
+                  cId="cg_max_installment_5" #cg_max_installment_5="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_5.valid" class="text-danger"> {{ app.text.cg_max_installment_5 || 'cg_max_installment_5' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_6</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_6" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_6 || 'cg_max_installment_6' }}"  name="cg_max_installment_6" 
+                  cId="cg_max_installment_6" #cg_max_installment_6="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_6.valid" class="text-danger"> {{ app.text.cg_max_installment_6 || 'cg_max_installment_6' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_7</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_7" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_7 || 'cg_max_installment_7' }}"  name="cg_max_installment_7" 
+                  cId="cg_max_installment_7" #cg_max_installment_7="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_7.valid" class="text-danger"> {{ app.text.cg_max_installment_7 || 'cg_max_installment_7' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_8</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_8" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_8 || 'cg_max_installment_8' }}"  name="cg_max_installment_8" 
+                  cId="cg_max_installment_8" #cg_max_installment_8="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_8.valid" class="text-danger"> {{ app.text.cg_max_installment_8 || 'cg_max_installment_8' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_9</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_9" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_9 || 'cg_max_installment_9' }}"  name="cg_max_installment_9" 
+                  cId="cg_max_installment_9" #cg_max_installment_9="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_9.valid" class="text-danger"> {{ app.text.cg_max_installment_9 || 'cg_max_installment_9' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_10</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_10" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_10 || 'cg_max_installment_10' }}"  name="cg_max_installment_10" 
+                  cId="cg_max_installment_10" #cg_max_installment_10="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_10.valid" class="text-danger"> {{ app.text.cg_max_installment_10 || 'cg_max_installment_10' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                <label>Max Installment_11</label>
+                <app-text-field [(ngModel)]="chitgroup.cg_max_installment_11" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_11 || 'cg_max_installment_11' }}"  name="cg_max_installment_11" 
+                  cId="cg_max_installment_11" #cg_max_installment_11="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cg_max_installment_11.valid" class="text-danger"> {{ app.text.cg_max_installment_11 || 'cg_max_installment_11' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+            </div>
+            <!------------------------------------------------------------------------chit month 12------------------------------------------------------->
+            <div *ngIf="chitgroup.cg_chit_month=='12'">
+
+            </div>
+            <!-------------------------------------------------------------------chit month 13--------------------------------------------------->
+            <div *ngIf="chitgroup.cg_chit_month=='13'">
+
+            </div>
+            <!-------------------------------------------------------------------------------chit month 14------------------------------------------------>
+            <div *ngIf="chitgroup.cg_chit_month=='14'">
+
+            </div>
+            <!-----------------------------------------------------------------------------------------------chit month 15------------------------->
+            <div *ngIf="chitgroup.cg_chit_month=='15'">
+
+            </div>
+            <!--------------------------------------------------------------------------------------------------------------------------chit month 16---------->
+            <div *ngIf="chitgroup.cg_chit_month=='16'">
+
+            </div>
+            <!---------------------------------------------------------------------------------------------------chit month 17--------------------->
+            <div *ngIf="chitgroup.cg_chit_month=='17'">
+
+            </div>
+            <!-------------------------------------------------------------------------------------------------chit month 18--------------------------->
+            <div *ngIf="chitgroup.cg_chit_month=='18'">
+
+            </div>
+            <!------------------------------------------------------------------------------------------------chit month 19--------------------->
+            <div *ngIf="chitgroup.cg_chit_month=='19'">
+
+            </div>
+            <!-------------------------------------------------------------------------------------------------------------------chit month 20------------->
+            <div *ngIf="chitgroup.cg_chit_month=='20'">
+
+            </div>
+            <!---------------------------------------------------------------------------------chit month 21------------------------------------>
+              <div *ngIf="chitgroup.cg_chit_month=='21'">
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 1</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_1" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }}"  name="cg_chit_no_1" 
+                    cId="cg_chit_no_1" #cg_chit_no_1="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_1.valid" class="text-danger"> {{ app.text.cg_chit_no_1 || 'cg_chit_no_1' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 2</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_2" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }}"  name="cg_chit_no_2" 
+                    cId="cg_chit_no_2" #cg_chit_no_2="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_2.valid" class="text-danger"> {{ app.text.cg_chit_no_2 || 'cg_chit_no_2' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 3</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_3" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }}"  name="cg_chit_no_3" 
+                    cId="cg_chit_no_3" #cg_chit_no_3="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_3.valid" class="text-danger"> {{ app.text.cg_chit_no_3 || 'cg_chit_no_3' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 4</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_4" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_4 || 'cg_chit_no_4' }}"  name="cg_chit_no_4" 
+                    cId="cg_chit_no_4" #cg_chit_no_4="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_4.valid" class="text-danger"> {{ app.text.cg_chit_no_4 || 'cg_chit_no_4' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 5</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_5" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_5 || 'cg_chit_no_5' }}"  name="cg_chit_no_5" 
+                    cId="cg_chit_no_5" #cg_chit_no_5="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_5.valid" class="text-danger"> {{ app.text.cg_chit_no_5 || 'cg_chit_no_5' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 6</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_6" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_6 || 'cg_chit_no_6' }}"  name="cg_chit_no_6" 
+                    cId="cg_chit_no_6" #cg_chit_no_6="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_6.valid" class="text-danger"> {{ app.text.cg_chit_no_6 || 'cg_chit_no_6' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 7</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_7" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_7 || 'cg_chit_no_7' }}"  name="cg_chit_no_7" 
+                    cId="cg_chit_no_7" #cg_chit_no_7="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_7.valid" class="text-danger"> {{ app.text.cg_chit_no_7 || 'cg_chit_no_7' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 8</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_8" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_8 || 'cg_chit_no_8' }}"  name="cg_chit_no_8" 
+                    cId="cg_chit_no_8" #cg_chit_no_8="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_8.valid" class="text-danger"> {{ app.text.cg_chit_no_8 || 'cg_chit_no_8' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 9</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_9" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_9 || 'cg_chit_no_9' }}"  name="cg_chit_no_9" 
+                    cId="cg_chit_no_9" #cg_chit_no_9="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_9.valid" class="text-danger"> {{ app.text.cg_chit_no_9 || 'cg_chit_no_9' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 10</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_10" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_10 || 'cg_chit_no_10' }}"  name="cg_chit_no_10" 
+                    cId="cg_chit_no_10" #cg_chit_no_10="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_10.valid" class="text-danger"> {{ app.text.cg_chit_no_10 || 'cg_chit_no_10' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 11</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_11" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_11 || 'cg_chit_no_11' }}"  name="cg_chit_no_11" 
+                    cId="cg_chit_no_11" #cg_chit_no_11="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_11.valid" class="text-danger"> {{ app.text.cg_chit_no_11 || 'cg_chit_no_11' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group"  >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 12</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_12" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_12 || 'cg_chit_no_12' }}"  name="cg_chit_no_12" 
+                    cId="cg_chit_no_12" #cg_chit_no_12="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_12.valid" class="text-danger"> {{ app.text.cg_chit_no_12 || 'cg_chit_no_12' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group"  >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 13</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_13" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_13 || 'cg_chit_no_13' }}"  name="cg_chit_no_13" 
+                    cId="cg_chit_no_13" #cg_chit_no_13="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_13.valid" class="text-danger"> {{ app.text.cg_chit_no_13 || 'cg_chit_no_13' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group" >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 14</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_14" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_14 || 'cg_chit_no_14' }}"  name="cg_chit_no_14" 
+                    cId="cg_chit_no_14" #cg_chit_no_14="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_14.valid" class="text-danger"> {{ app.text.cg_chit_no_14 || 'cg_chit_no_14' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group" >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 15</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_15" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_15 || 'cg_chit_no_15' }}"  name="cg_chit_no_15" 
+                    cId="cg_chit_no_15" #cg_chit_no_15="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_15.valid" class="text-danger"> {{ app.text.cg_chit_no_15 || 'cg_chit_no_15' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group" >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 16</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_16" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_16 || 'cg_chit_no_16' }}"  name="cg_chit_no_16" 
+                    cId="cg_chit_no_16" #cg_chit_no_16="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_16.valid" class="text-danger"> {{ app.text.cg_chit_no_16 || 'cg_chit_no_16' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group"  >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 17</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_17" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_17 || 'cg_chit_no_17' }}"  name="cg_chit_no_17" 
+                    cId="cg_chit_no_17" #cg_chit_no_17="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_17.valid" class="text-danger"> {{ app.text.cg_chit_no_17 || 'cg_chit_no_17' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group"  >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 18</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_18" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_18 || 'cg_chit_no_18' }}"  name="cg_chit_no_18" 
+                    cId="cg_chit_no_18" #cg_chit_no_18="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_18.valid" class="text-danger"> {{ app.text.cg_chit_no_18 || 'cg_chit_no_18' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group"  >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 19</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_19" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_19 || 'cg_chit_no_19' }}"  name="cg_chit_no_19" 
+                    cId="cg_chit_no_19" #cg_chit_no_19="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_19.valid" class="text-danger"> {{ app.text.cg_chit_no_19 || 'cg_chit_no_19' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group" >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 20</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_20" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_19 || 'cg_chit_no_19' }}"  name="cg_chit_no_19" 
+                    cId="cg_chit_no_19" #cg_chit_no_19="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_19.valid" class="text-danger"> {{ app.text.cg_chit_no_19 || 'cg_chit_no_19' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+                <fieldset class="form-group"  >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Chit No 21</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_chit_no_21" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_chit_no_21 || 'cg_chit_no_21' }}"  name="cg_chit_no_21" 
+                    cId="cg_chit_no_21" #cg_chit_no_21="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_chit_no_21.valid" class="text-danger"> {{ app.text.cg_chit_no_21 || 'cg_chit_no_21' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                
+  
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_1</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_1" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }}"  name="cg_max_installment_1" 
+                    cId="cg_max_installment_1" #cg_max_installment_1="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_1.valid" class="text-danger"> {{ app.text.cg_max_installment_1 || 'cg_max_installment_1' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_2</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_2" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }}"  name="cg_max_installment_2" 
+                    cId="cg_max_installment_2" #cg_max_installment_2="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_2.valid" class="text-danger"> {{ app.text.cg_max_installment_2 || 'cg_max_installment_2' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_3</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_3" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }}"  name="cg_max_installment_3" 
+                    cId="cg_max_installment_3" #cg_max_installment_3="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_3.valid" class="text-danger"> {{ app.text.cg_max_installment_3 || 'cg_max_installment_3' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_4</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_4" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }}"  name="cg_max_installment_4" 
+                    cId="cg_max_installment_4" #cg_max_installment_4="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_4.valid" class="text-danger"> {{ app.text.cg_max_installment_4 || 'cg_max_installment_4' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_5</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_5" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_5 || 'cg_max_installment_5' }}"  name="cg_max_installment_5" 
+                    cId="cg_max_installment_5" #cg_max_installment_5="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_5.valid" class="text-danger"> {{ app.text.cg_max_installment_5 || 'cg_max_installment_5' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_6</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_6" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_6 || 'cg_max_installment_6' }}"  name="cg_max_installment_6" 
+                    cId="cg_max_installment_6" #cg_max_installment_6="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_6.valid" class="text-danger"> {{ app.text.cg_max_installment_6 || 'cg_max_installment_6' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_7</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_7" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_7 || 'cg_max_installment_7' }}"  name="cg_max_installment_7" 
+                    cId="cg_max_installment_7" #cg_max_installment_7="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_7.valid" class="text-danger"> {{ app.text.cg_max_installment_7 || 'cg_max_installment_7' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_8</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_8" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_8 || 'cg_max_installment_8' }}"  name="cg_max_installment_8" 
+                    cId="cg_max_installment_8" #cg_max_installment_8="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_8.valid" class="text-danger"> {{ app.text.cg_max_installment_8 || 'cg_max_installment_8' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_9</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_9" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_9 || 'cg_max_installment_9' }}"  name="cg_max_installment_9" 
+                    cId="cg_max_installment_9" #cg_max_installment_9="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_9.valid" class="text-danger"> {{ app.text.cg_max_installment_9 || 'cg_max_installment_9' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_10</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_10" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_10 || 'cg_max_installment_10' }}"  name="cg_max_installment_10" 
+                    cId="cg_max_installment_10" #cg_max_installment_10="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_10.valid" class="text-danger"> {{ app.text.cg_max_installment_10 || 'cg_max_installment_10' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group">
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_11</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_11" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_11 || 'cg_max_installment_11' }}"  name="cg_max_installment_11" 
+                    cId="cg_max_installment_11" #cg_max_installment_11="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_11.valid" class="text-danger"> {{ app.text.cg_max_installment_11 || 'cg_max_installment_11' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group"  >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_12</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_12" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_12 || 'cg_max_installment_12' }}"  name="cg_max_installment_12" 
+                    cId="cg_max_installment_12" #cg_max_installment_12="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_12.valid" class="text-danger"> {{ app.text.cg_max_installment_12 || 'cg_max_installment_12' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group"  >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_13</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_13" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_13 || 'cg_max_installment_13' }}"  name="cg_max_installment_13" 
+                    cId="cg_max_installment_13" #cg_max_installment_13="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_13.valid" class="text-danger"> {{ app.text.cg_max_installment_13 || 'cg_max_installment_13' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group"  >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_14</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_14" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_14 || 'cg_max_installment_14' }}"  name="cg_max_installment_14" 
+                    cId="cg_max_installment_14" #cg_max_installment_14="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_14.valid" class="text-danger"> {{ app.text.cg_max_installment_14 || 'cg_max_installment_14' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group" >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_15</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_15" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_15 || 'cg_max_installment_15' }}"  name="cg_max_installment_15" 
+                    cId="cg_max_installment_15" #cg_max_installment_15="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_15.valid" class="text-danger"> {{ app.text.cg_max_installment_15 || 'cg_max_installment_15' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group"  >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_16</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_16" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_16 || 'cg_max_installment_16' }}"  name="cg_max_installment_16" 
+                    cId="cg_max_installment_16" #cg_max_installment_16="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_16.valid" class="text-danger"> {{ app.text.cg_max_installment_16 || 'cg_max_installment_16' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group"  >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_17</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_17" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_17 || 'cg_max_installment_17' }}"  name="cg_max_installment_17" 
+                    cId="cg_max_installment_17" #cg_max_installment_17="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_17.valid" class="text-danger"> {{ app.text.cg_max_installment_17 || 'cg_max_installment_17' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group"  >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_18</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_18" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_18 || 'cg_max_installment_18' }}"  name="cg_max_installment_18" 
+                    cId="cg_max_installment_18" #cg_max_installment_18="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_18.valid" class="text-danger"> {{ app.text.cg_max_installment_18 || 'cg_max_installment_18' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group" >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_19</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_19" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_19 || 'cg_max_installment_19' }}"  name="cg_max_installment_19" 
+                    cId="cg_max_installment_19" #cg_max_installment_19="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_19.valid" class="text-danger"> {{ app.text.cg_max_installment_19 || 'cg_max_installment_19' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group" >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_20</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_20" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_20 || 'cg_max_installment_20' }}"  name="cg_max_installment_20" 
+                    cId="cg_max_installment_20" #cg_max_installment_20="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_20.valid" class="text-danger"> {{ app.text.cg_max_installment_20 || 'cg_max_installment_20' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+                <fieldset class="form-group"  >
+                  <!-- <label for="cg_chit_chitgroup">{{ app.text.cg_chit_chitgroup || 'cg_chit_chitgroup' }}</label> -->
+                  <label>Max Installment_21</label>
+                  <app-text-field [(ngModel)]="chitgroup.cg_max_installment_21" type="text" view="input"
+                    placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cg_max_installment_21 || 'cg_max_installment_21' }}"  name="cg_max_installment_21" 
+                    cId="cg_max_installment_21" #cg_max_installment_21="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cg_max_installment_21.valid" class="text-danger"> {{ app.text.cg_max_installment_21 || 'cg_max_installment_21' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+                </fieldset>
+  
+              </div>
+             <!-------------------------------------------------chit month 22-------------------------------------------------------->
+             <div *ngIf="chitgroup.cg_chit_month=='22'">
+
+             </div>
+              <!------------------------------------------------------------------------------chit month 23------------------------------>
+              <div *ngIf="chitgroup.cg_chit_month=='23'">
+
+              </div>
+              <!--------------------------------------------------------------------chit month 24--------------------------------------->
+              <div *ngIf="chitgroup.cg_chit_month=='24'">
+
+              </div>
+              <!----------------------------------------chit month 25------------------------------------------------->
+              <div *ngIf="chitgroup.cg_chit_month=='25'">
+
+              </div>
+              <!---------------------------------------------------------chit month 26------------------------------------->
+              <div *ngIf="chitgroup.cg_chit_month=='26'">
+
+              </div>
+              <!---------------------------------------------------------------------------------------chit month 27----------------------------->
+              <div *ngIf="chitgroup.cg_chit_month=='27'">
+
+              </div>
+              <!---------------------------------------------------------------------------------------chit month 28------------------------------>
+              <div *ngIf="chitgroup.cg_chit_month=='28'">
+
+              </div>
+              <!------------------------------------------------------------------------------------------chit month 29---------------------------->
+              <div *ngIf="chitgroup.cg_chit_month=='29'">
+
+              </div>
+              <!--------------------------------------------------------------------------------chit month 30------------------------------------------>
+              <div *ngIf="chitgroup.cg_chit_month=='30'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 31------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='31'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 32------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='32'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 33------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='33'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 34------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='34'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 35------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='35'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 36------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='36'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 37------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='37'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 38------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='38'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 39------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='39'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 40------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='40'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 41------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='41'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 42------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='42'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 43------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='43'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 44------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='44'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 45------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='45'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 46------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='46'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 47------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='47'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 48------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='48'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 49------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='49'">
+
+              </div>
+               <!--------------------------------------------------------------------------------chit month 50------------------------------------------>
+               <div *ngIf="chitgroup.cg_chit_month=='50'">
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary btn-round waves-effect" [disabled]="!baseForm.form.valid"
+            *ngIf="loadingText == 'Save'">
+            {{ app.text.save || 'save' }}
+          </button>
+          <button type="submit" class="btn btn-primary btn-round waves-effect" disabled *ngIf="loadingText != 'Save'">
+            {{ app.text.saving || 'saving' }}
+          </button>
+          <button type="button" class="btn btn-danger btn-round waves-effect" data-dismiss="modal">{{ app.text.cancel ||
+            'cancel' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

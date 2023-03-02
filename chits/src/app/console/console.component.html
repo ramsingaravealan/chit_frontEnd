@@ -1,0 +1,269 @@
+<!-- Page Loader -->
+<div class="page-loader-wrapper">
+  <div class="loader">
+      <div class="m-t-30"><img class="zmdi-hc-spin" src="assets/images/logo.svg" width="48" height="48" alt="Compass"></div>
+      <p>Please wait...</p>
+  </div>
+</div>
+<!-- Overlay For Sidebars -->
+<div class="overlay"></div>
+
+<!-- Top Bar -->
+<nav class="navbar">
+    <div class="col-12">        
+        <div class="navbar-header">
+            <a href="javascript:void(0);" class="bars"></a>
+            <a class="navbar-brand"><span class="m-l-10">Chit Funds</span></a>
+        </div>
+        <ul class="nav navbar-nav navbar-left">
+            <li><a href="javascript:void(0);" class="ls-toggle-btn" data-close="true"><i class="zmdi zmdi-swap"></i></a></li>            
+            <li class="hidden-sm-down">
+                
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <!-- <li>
+            <a style="cursor: pointer;" class="mega-menu" data-close="true" (click)="setLangEng()">EN</a>
+            </li>
+            <li>
+              <a style="cursor: pointer;" class="mega-menu" data-close="true" (click)="setLangEs()">TA</a>
+            </li> -->
+            <li>
+                <a href="javascript:void(0);" class="fullscreen hidden-sm-down" data-provide="fullscreen" data-close="true"><i class="zmdi zmdi-fullscreen"></i></a>
+            </li>
+            <li><a style="cursor: pointer;" class="mega-menu" data-close="true" (click)="logout()"><i class="zmdi zmdi-power"></i></a></li>
+            <!-- <li class=""><a href="javascript:void(0);" class="js-right-sidebar" data-close="true"><i class="zmdi zmdi-settings zmdi-hc-spin"></i></a></li> -->
+        </ul>
+    </div>
+</nav>
+
+<!-- Left Sidebar -->
+<aside id="leftsidebar" class="sidebar">
+    <div class="menu">
+        <ul class="list">
+            <li>
+                <div class="user-info" *ngIf="login.id != '-1'">
+                    <!-- <div class="image"><a><img src="{{app.getProfileUrl()}}{{login.user_photo}}" alt="User"></a></div> -->
+                    <div class="image"><a><img src="assets/images/photo.jpg" alt="User"></a></div> 
+                    <div class="detail">
+                        <h4>{{login.user_full_name}}</h4>
+                        <small>{{login.user_email}}</small>                        
+                    </div>
+                    <!-- <a href="events.html" title="Events"><i class="zmdi zmdi-calendar"></i></a>
+                    <a href="mail-inbox.html" title="Inbox"><i class="zmdi zmdi-email"></i></a>
+                    <a href="contact.html" title="Contact List"><i class="zmdi zmdi-account-box-phone"></i></a>
+                    <a href="chat.html" title="Chat App"><i class="zmdi zmdi-comments"></i></a> -->
+                    <a style="cursor: pointer;" (click)="logout()" title="Sign out"><i class="zmdi zmdi-power"></i></a>
+                </div>
+            </li>
+           
+          
+            <!-- <li class="header">MAIN</li> -->
+            <!-- <li routerLinkActive="active open">
+              <a routerLink="dashboard">
+                  
+                  <span>Dashboard</span>
+              </a>
+            </li>
+            <li routerLinkActive="active open">
+              <a routerLink="blank">
+                  
+                  <span>Blank</span>
+              </a>
+            </li> -->
+            <!-- <li routerLinkActive="active open">
+                <a routerLink="customers">
+                    <span>{{ app.text.customers || 'customers' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="restaurants">
+                    <span>{{ app.text.restaurants || 'restaurants' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="taxes">
+                    <span>{{ app.text.taxes || 'taxes' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="plans">
+                    <span>{{ app.text.plans || 'plans' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="menus">
+                    <span>{{ app.text.menus || 'menus' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="stripe">
+                    <span>{{ app.text.stripe || 'stripe' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="invoices">
+                    <span>{{ app.text.invoices || 'invoices' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="users">
+                    <span>{{ app.text.users || 'users' }}</span>
+                </a>
+            </li> -->
+            <!-- <li><h6 style="margin-top: 10px;margin-left: 15px;">General</h6></li> -->
+            <li routerLinkActive="active open">
+                <a routerLink="dashboard">
+                    <span><img src="assets/images/dashboard.png"></span><span>Dashboard</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="newcustomers">
+                    <span><img src="assets/images/customers.png" width="28" height="28"></span> <span>New Customers</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="addchits">
+                    <span><img src="assets/images/chit.png" width="28" height="28"></span><span>Add Chits</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="addagent">
+                    <span><img src="assets/images/agent.png" width="28" height="28"></span><span> Add Agent</span>
+                </a>
+            </li>
+           <!-- <li><h6 style="margin-top: 5px;margin-left: 5px;">Administrator</h6></li>
+            <li routerLinkActive="active open"  id = "div">
+                <a routerLink="chitscheme">
+                    <span>{{ app.text.chitscheme || 'chitscheme' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open"  id = "div">
+                <a routerLink="chitvalue">
+                    <span>{{ app.text.chitvalue || 'chitvalue' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open"  id = "div">
+                <a routerLink="chitgroup">
+                    <span>{{ app.text.chitgroup || 'chitgroup' }}</span>
+                </a>
+            </li> -->
+            
+            <li routerLinkActive="active open"  id = "div">
+                <a routerLink="collections">
+                    <span><img src="assets/images/collection.png" width="28" height="28"></span> <span>Collections</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="report">
+                    <span><img src="assets/images/report.png" width="28" height="28"></span> <span> Reports</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="users">
+                    <span><img src="assets/images/users.png" width="28" height="28"></span> <span> Users</span>
+                </a>
+            </li>
+          
+            <!-- <li routerLinkActive="active open">
+                <a routerLink="translations">
+                    <span>{{ app.text.translations || 'translations' }}</span>
+                </a>
+            </li> -->
+            <li>
+                <a href="#submenu2" data-toggle="collapse" aria-expanded="false" class="">
+                    <div class="d-flex w-100 justify-content-start align-items-center">
+                        <span>Administrator<span> <img src="assets/images/triangle.png" height="12" style="margin-left:75px ; margin-bottom: 1px;"></span></span>
+                        <span class="submenu-icon ml-auto"></span>
+                    </div>
+                </a>
+                <!-- Submenu content -->
+                <div id='submenu2' class="collapse sidebar-submenu">
+                    <a routerLink="chitvalue">
+                        <span><img src="assets/images/value.png" width="28" height="28"></span><span> Chit Value</span>
+                    </a>
+                    <a routerLink="chitscheme">
+                        <span><img src="assets/images/scheme.png" width="28" height="28"></span> <span> Chit Scheme</span>
+                    </a>
+                    <a routerLink="chitgroup">
+                        <span><img src="assets/images/group.png" width="28" height="28"></span> <span> Chit Group</span>
+                    </a>
+                   
+                </div>
+            </li>
+
+              
+               
+                
+            
+            <!-- <li routerLinkActive="active open">
+                <a routerLink="adminsettings">
+                    <span>{{ app.text.admin_settings || 'admin_settings' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="customerdetails">
+                    <span>{{ app.text.customer_details || 'customer_details' }}</span>
+                </a>
+            </li> -->
+            <!-- <li routerLinkActive="active open">
+                <a routerLink="department">
+                    <span>{{ app.text.department || 'department' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="designation">
+                    <span>{{ app.text.designation || 'designation' }}</span>
+                </a>
+            </li> -->
+            <!-- <li routerLinkActive="active open">
+                <a routerLink="emailtemplates">
+                    <span>{{ app.text.email_templates || 'email_templates' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="endusers">
+                    <span>{{ app.text.end_users || 'end_users' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="endusercarts">
+                    <span>{{ app.text.enduser_carts || 'enduser_carts' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="orderedproducts">
+                    <span>{{ app.text.ordered_products || 'ordered_products' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="orders">
+                    <span>{{ app.text.orders || 'orders' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="productcategories">
+                    <span>{{ app.text.product_categories || 'product_categories' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="products">
+                    <span>{{ app.text.products || 'products' }}</span>
+                </a>
+            </li>
+            <li routerLinkActive="active open">
+                <a routerLink="taxes">
+                    <span>{{ app.text.taxes || 'taxes' }}</span>
+                </a>
+            </li> -->
+           
+            <!-- <li routerLinkActive="active open">
+              <a routerLink="settings">
+                  <span>{{ app.text.settings || 'settings' }}</span>
+              </a>
+            </li> -->
+        </ul>
+    </div>
+</aside>
+
+<router-outlet></router-outlet>

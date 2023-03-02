@@ -1,0 +1,174 @@
+
+
+<section class="content">
+  <div class="block-header">
+      <div class="row">
+          <div class="col-lg-7 col-md-6 col-sm-12">
+              <h2>{{ app.text.taxes || 'taxes' }}
+              <small class="text-muted"></small>
+              </h2>
+          </div>
+          <div class="col-lg-5 col-md-6 col-sm-12">    
+                            <button class="btn btn-primary btn-icon btn-round hidden-sm-down float-right m-l-10" type="button" (click)="add()">
+                  <i class="zmdi zmdi-plus"></i>
+              </button>
+                        </div>
+      </div>
+  </div>
+  <div class="container-fluid">
+      <div class="row clearfix">
+          <div class="col-lg-12">
+              <div class="card">
+                  <div class="body">
+                    <h2 class="card-inside-title"></h2>
+                        <div class="row clearfix">
+      <div class="col-md-12">
+        <form (ngSubmit)="onSearchSubmit()" #searchForm="ngForm">
+                   <div class="row">
+            <div class="col-md-3">
+              <div class="form-group">
+                <label class="font-weight-normal">{{ app.text.per_page || 'per_page' }}<span class="required"></span></label>
+                <select class="custom-select form-control" id="num_per_page" required [(ngModel)]="num_per_page"
+                  name="num_per_page">
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="200">200</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <fieldset class="form-group">
+                <label for="search">{{ app.text.search || 'search' }}</label>
+                <app-text-field [(ngModel)]="search" 
+                type="text" view="input"
+                placeholder="{{ app.text.search || 'search' }} {{ app.text.here || 'here' }}" 
+                name="search" cId="search" 
+                #searchx="ngModel" 
+                required="false"></app-text-field>
+                <div [hidden]="searchx.valid" class="text-danger"> {{ app.text.search || 'search' }} {{ app.text.is_required || 'is_required' }}
+                </div>
+               </fieldset>
+            </div>
+           
+            <div class="col-md-3">
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-block pull-right waves-effect" [disabled]="!searchForm.form.valid"
+                  style="margin-top: 30px">{{ app.text.search || 'search' }}</button>
+              </div>
+            </div>
+
+          </div>
+        </form>
+
+      </div>
+      <div class="col-md-12">
+        <div class="body table-responsive">
+            <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th> #</th>
+                <th>{{ app.text.tax_name || 'tax_name' }}</th><th>{{ app.text.tax_value || 'tax_value' }}</th><th>{{ app.text.tax_type || 'tax_type' }}</th><th>{{ app.text.tax_active || 'tax_active' }}</th><th>{{ app.text.tax_log || 'tax_log' }}</th>              <th>{{ app.text.action || 'action' }}</th>
+            </tr>
+          </thead>
+          <tbody>
+             <tr *ngFor="let listItem of taxes;let i=index">
+              <td>{{i+1}}</td>
+              <td>{{listItem.tax_name}}</td><td>{{listItem.tax_value}}</td><td>{{listItem.tax_type}}</td><td>{{listItem.tax_active}}</td><td>{{convertToDateTime(listItem.tax_log)}}</td>              <td><a (click)="editItem(listItem)" style="cursor: pointer;">{{ app.text.edit || 'edit' }}</a></td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+      <div class="col-md-12">
+              <button class="btn btn-primary btn-block" *ngIf="start_from+received != count && taxes.length > 0"
+                (click)="moveNext()"><span class="float-left"> {{displayCount}} </span> <span class="float-right">{{ app.text.load_more || 'load_more' }}..</span></button>
+      </div>
+    </div>
+                        
+                    
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+
+
+
+<div class="modal fade" id="myModaltax_id"  role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <form (ngSubmit)="onSubmit()" #baseForm="ngForm">
+          <div class="modal-header">
+              <h4 class="title" id="largeModalLabeltax_id" *ngIf="tax.tax_id == '-1'">
+                {{ app.text.add || 'add' }}
+              </h4>
+              <h4 class="title" id="largeModalLabeltax_id" *ngIf="tax.tax_id != '-1'">
+                {{ app.text.edit || 'edit' }}
+              </h4>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+    <div class="col-md-12">
+
+        
+                    <fieldset class="form-group">
+                        <label for="tax_name">{{ app.text.tax_name || 'tax_name' }}</label>
+                        <app-text-field [(ngModel)]="tax.tax_name" 
+                            type="text" view="input"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.tax_name || 'tax_name' }}" 
+                            name="tax_name" cId="tax_name" 
+                            #tax_name="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="tax_name.valid" class="text-danger"> {{ app.text.tax_name || 'tax_name' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            
+                    <fieldset class="form-group">
+                        <label for="tax_value">{{ app.text.tax_value || 'tax_value' }}</label>
+                        <app-text-field [(ngModel)]="tax.tax_value" 
+                            type="text" view="currency"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.tax_value || 'tax_value' }}" 
+                            name="tax_value" cId="tax_value" 
+                            #tax_value="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="tax_value.valid" class="text-danger"> {{ app.text.tax_value || 'tax_value' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                                                <fieldset class="form-group">
+                        <label for="tax_type">{{ app.text.tax_type || 'tax_type' }}</label>
+                        <select class="form-control" id="tax_type" [(ngModel)]="tax.tax_type"
+                                name="tax_type" #tax_type="ngModel" required>
+                                                            <option value="percent">{{ app.text.percent || 'percent' }}</option>
+                                                    <option value="fixed">{{ app.text.fixed || 'fixed' }}</option>
+                                            </select>
+                    </fieldset>
+                            <fieldset class="form-group">
+                        <label for="tax_active">{{ app.text.tax_active || 'tax_active' }}</label>
+                        <select class="form-control" id="tax_active" [(ngModel)]="tax.tax_active"
+                                name="tax_active" #tax_active="ngModel" required>
+                                                            <option value="Y">{{ app.text.yes || 'yes' }}</option>
+                                                    <option value="N">{{ app.text.no || 'no' }}</option>
+                                            </select>
+                    </fieldset>
+            </div>
+</div>          </div>
+          <div class="modal-footer">
+              <button type="submit" class="btn btn-primary btn-round waves-effect" [disabled]="!baseForm.form.valid" *ngIf="loadingText == 'Save'">
+                {{ app.text.save || 'save' }}
+              </button>
+              <button type="submit" class="btn btn-primary btn-round waves-effect" disabled *ngIf="loadingText != 'Save'">
+                {{ app.text.saving || 'saving' }}
+              </button>
+              <button type="button" class="btn btn-danger btn-round waves-effect" data-dismiss="modal">{{ app.text.cancel || 'cancel' }}</button>
+          </div>
+        </form>
+      </div>
+  </div>
+</div>
+
+
+

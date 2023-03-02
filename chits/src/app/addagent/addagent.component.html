@@ -1,0 +1,536 @@
+<section class="content">
+  <div class="block-header">
+    <div class="row">
+      <div class="col-lg-7 col-md-6 col-sm-12">
+        <h2>Add Agent
+          <small class="text-muted"></small>
+        </h2>
+      </div>
+      <div class="col-lg-5 col-md-6 col-sm-12">
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row clearfix">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="body">
+            <h2 class="card-inside-title"></h2>
+            <form (ngSubmit)="onSubmit()" #baseForm="ngForm">
+              <div class="row">
+                <div class="col-md-12">
+
+
+                  <h2>Agent Details</h2>
+                  <h3>Personal Details</h3>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_name">{{ app.text.ag_name || 'ag_name' }}</label> -->
+                        <label>Name</label>
+                        <app-text-field [(ngModel)]="agent.ag_name" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_name || 'ag_name' }}"
+                          name="ag_name" cId="ag_name" #ag_name="ngModel" required="false"></app-text-field>
+                        <div [hidden]="ag_name.valid" class="text-danger"> {{ app.text.ag_name || 'ag_name' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_gender">{{ app.text.ag_gender || 'ag_gender' }}</label> -->
+                        <label>Gender</label>
+                        <select class="form-control" id="ag_gender" [(ngModel)]="agent.ag_gender" name="ag_gender"
+                          #ag_gender="ngModel" required>
+                          <option value="-1">{{ app.text.select_gender || 'select_gender' }}</option>
+                          <option value="Male">{{ app.text.male || 'male' }}</option>
+                          <option value="Female">{{ app.text.female || 'female' }}</option>
+
+                        </select>
+                      </fieldset>
+
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_education_qualification">{{ app.text.ag_education_qualification ||
+                          'ag_education_qualification' }}</label> -->
+                          <label>Education Qualification</label>
+                        <app-text-field [(ngModel)]="agent.ag_education_qualification" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_education_qualification || 'ag_education_qualification' }}"
+                          name="ag_education_qualification" cId="ag_education_qualification"
+                          #ag_education_qualification="ngModel" required="false"></app-text-field>
+                        <div [hidden]="ag_education_qualification.valid" class="text-danger"> {{
+                          app.text.ag_education_qualification || 'ag_education_qualification' }} {{ app.text.is_required
+                          || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                    <div class="col-md-4">
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_dob">{{ app.text.ag_dob || 'ag_dob' }}</label> -->
+                        <label>Date Of Birth</label>
+                        <app-date-time-picker [(ngModel)]="agent.ag_dob" name="ag_dob" cId="ag_dob" #ag_dob="ngModel"
+                          required="false"></app-date-time-picker>
+                        <div [hidden]="ag_dob.valid || ag_dob.pristine" class="text-danger"> {{
+                          app.text.ag_dob || 'ag_dob' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_primary_number">{{ app.text.ag_primary_number || 'ag_primary_number' }}</label> -->
+                        <label>Primary Phone Number</label>
+                        <app-text-field [(ngModel)]="agent.ag_primary_number" type="text" view="phone"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_primary_number || 'ag_primary_number' }}"
+                          name="ag_primary_number" cId="ag_primary_number" #ag_primary_number="ngModel"
+                          required="false"></app-text-field>
+
+                        <div [hidden]="ag_primary_number.valid" class="text-danger"> {{ app.text.ag_primary_number ||
+                          'ag_primary_number' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_pan_number">{{ app.text.ag_pan_number || 'ag_pan_number' }}</label> -->
+                        <label>Pan Number</label>
+                        <app-text-field [(ngModel)]="agent.ag_pan_number" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_pan_number || 'ag_pan_number' }}"
+                          name="ag_pan_number" cId="ag_pan_number" #ag_pan_number="ngModel" required="false">
+                        </app-text-field>
+                        <div [hidden]="ag_pan_number.valid" class="text-danger"> {{ app.text.ag_pan_number ||
+                          'ag_pan_number' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                    <div class="col-md-4">
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_age">{{ app.text.ag_age || 'ag_age' }}</label> -->
+                        <label>Age</label>
+                        <app-text-field [(ngModel)]="agent.ag_age" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_age || 'ag_age' }}" name="ag_age"
+                          cId="ag_age" #ag_age="ngModel" required="false"></app-text-field>
+                        <div [hidden]="ag_age.valid" class="text-danger"> {{ app.text.ag_age || 'ag_age' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_secondary_number">{{ app.text.ag_secondary_number || 'ag_secondary_number'
+                          }}</label> -->
+                          <label>Secondary Phone Number</label>
+                        <app-text-field [(ngModel)]="agent.ag_secondary_number" type="text" view="phone"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_secondary_number || 'ag_secondary_number' }}"
+                          name="ag_secondary_number" cId="ag_secondary_number" #ag_secondary_number="ngModel"
+                          required="false"></app-text-field>
+
+                        <div [hidden]="ag_secondary_number.valid" class="text-danger"> {{ app.text.ag_secondary_number
+                          || 'ag_secondary_number' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_aadhaar_number">{{ app.text.ag_aadhaar_number || 'ag_aadhaar_number' }}</label> -->
+                        <label>Aadhar Number</label>
+                        <app-text-field [(ngModel)]="agent.ag_aadhaar_number" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_aadhaar_number || 'ag_aadhaar_number' }}"
+                          name="ag_aadhaar_number" cId="ag_aadhaar_number" #ag_aadhaar_number="ngModel"
+                          required="false"></app-text-field>
+                        <div [hidden]="ag_aadhaar_number.valid" class="text-danger"> {{ app.text.ag_aadhaar_number ||
+                          'ag_aadhaar_number' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="row">
+                   
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_martial_status">{{ app.text.ag_martial_status || 'ag_martial_status' }}</label> -->
+                        <label>Matial Status</label>
+                        <select class="form-control" id="ag_martial_status" [(ngModel)]="agent.ag_martial_status"
+                          name="ag_martial_status" #ag_martial_status="ngModel" required>
+                          <option value="-1">{{ app.text.select_martial_status || 'select_martial_status' }}</option>
+                          <option value="Single">{{ app.text.single || 'single' }}</option>
+                          <option value="Married">{{ app.text.married || 'married' }}</option>
+                          <option value="Married">{{ app.text.divorced || 'divorced' }}</option>
+
+                        </select>
+                      </fieldset>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_permanant_address">{{ app.text.ag_permanant_address || 'ag_permanant_address'
+                          }}</label> -->
+                          <label>Permanant Address</label>
+                        <app-text-area [(ngModel)]="agent.ag_permanant_address" view="textarea" type="mediumtext"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_permanant_address || 'ag_permanant_address' }}"
+                          name="ag_permanant_address" cId="ag_permanant_address" #ag_permanant_address="ngModel"
+                          required="false"></app-text-area>
+                        <div [hidden]="ag_permanant_address.valid" class="text-danger"> {{ app.text.ag_permanant_address
+                          || 'ag_permanant_address' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+
+                <h4>Parents Details</h4>
+
+                <div class="col-md-12">
+                  <h4>Father Details</h4>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_father_name">{{ app.text.ag_father_name || 'ag_father_name' }}</label> -->
+                        <label>Father Name</label>
+                        <app-text-field [(ngModel)]="agent.ag_father_name" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_father_name || 'ag_father_name' }}"
+                          name="ag_father_name" cId="ag_father_name" #ag_father_name="ngModel" required="false">
+                        </app-text-field>
+                        <div [hidden]="ag_father_name.valid" class="text-danger"> {{ app.text.ag_father_name ||
+                          'ag_father_name'
+                          }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_father_adhar">{{ app.text.ag_father_adhar || 'ag_father_adhar' }}</label> -->
+                        <label>Father Aadhar</label>
+                        <app-text-field [(ngModel)]="agent.ag_father_adhar" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_father_adhar || 'ag_father_adhar' }}"
+                          name="ag_father_adhar" cId="ag_father_adhar" #ag_father_adhar="ngModel" required="false">
+                        </app-text-field>
+                        <div [hidden]="ag_father_adhar.valid" class="text-danger"> {{ app.text.ag_father_adhar ||
+                          'ag_father_adhar' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_father_phoneno">{{ app.text.ag_father_phoneno || 'ag_father_phoneno' }}</label> -->
+                        <label>Father Phone Number</label>
+                        <app-text-field [(ngModel)]="agent.ag_father_phoneno" type="text" view="phone"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_father_phoneno || 'ag_father_phoneno' }}"
+                          name="ag_father_phoneno" cId="ag_father_phoneno" #ag_father_phoneno="ngModel"
+                          required="false">
+                        </app-text-field>
+
+                        <div [hidden]="ag_father_phoneno.valid" class="text-danger"> {{ app.text.ag_father_phoneno ||
+                          'ag_father_phoneno' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_father_permanent_address">{{ app.text.ag_father_permanent_address ||
+                          'ag_father_permanent_address'
+                          }}</label> -->
+                          <label>Father Permanant Address</label>
+                        <app-text-area [(ngModel)]="agent.ag_father_permanent_address" view="textarea" type="mediumtext"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_father_permanent_address || 'ag_father_permanent_address' }}"
+                          name="ag_father_permanent_address" cId="ag_father_permanent_address"
+                          #ag_father_permanent_address="ngModel" required="false"></app-text-area>
+                        <div [hidden]="ag_father_permanent_address.valid" class="text-danger"> {{
+                          app.text.ag_father_permanent_address
+                          || 'ag_father_permanent_address' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <h4>Mother Details</h4>
+                  <div class="row">
+                    <div class="col-md-6">
+
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_mother_name">{{ app.text.ag_mother_name || 'ag_mother_name' }}</label> -->
+                        <label>Mother Name</label>
+                        <app-text-field [(ngModel)]="agent.ag_mother_name" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_mother_name || 'ag_mother_name' }}"
+                          name="ag_mother_name" cId="ag_mother_name" #ag_mother_name="ngModel" required="false">
+                        </app-text-field>
+                        <div [hidden]="ag_mother_name.valid" class="text-danger"> {{ app.text.ag_mother_name ||
+                          'ag_mother_name'
+                          }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_mother_adhar">{{ app.text.ag_mother_adhar || 'ag_mother_adhar' }}</label> -->
+                        <label>Mother Aadhar</label>
+                        <app-text-field [(ngModel)]="agent.ag_mother_adhar" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_mother_adhar || 'ag_mother_adhar' }}"
+                          name="ag_mother_adhar" cId="ag_mother_adhar" #ag_mother_adhar="ngModel" required="false">
+                        </app-text-field>
+                        <div [hidden]="ag_mother_adhar.valid" class="text-danger"> {{ app.text.ag_mother_adhar ||
+                          'ag_mother_adhar' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_mother_phoneno">{{ app.text.ag_mother_phoneno || 'ag_mother_phoneno' }}</label> -->
+                        <label>Mother Phone Number</label>
+                        <app-text-field [(ngModel)]="agent.ag_mother_phoneno" type="text" view="phone"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_mother_phoneno || 'ag_mother_phoneno' }}"
+                          name="ag_mother_phoneno" cId="ag_mother_phoneno" #ag_mother_phoneno="ngModel"
+                          required="false">
+                        </app-text-field>
+
+                        <div [hidden]="ag_mother_phoneno.valid" class="text-danger"> {{ app.text.ag_mother_phoneno ||
+                          'ag_mother_phoneno' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_mother_permanent_address">{{ app.text.ag_mother_permanent_address ||
+                          'ag_mother_permanent_address'
+                          }}</label> -->
+                          <label>Mother Permanant Address</label>
+                        <app-text-area [(ngModel)]="agent.ag_mother_permanent_address" view="textarea" type="mediumtext"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_mother_permanent_address || 'ag_mother_permanent_address' }}"
+                          name="ag_mother_permanent_address" cId="ag_mother_permanent_address"
+                          #ag_mother_permanent_address="ngModel" required="false"></app-text-area>
+                        <div [hidden]="ag_mother_permanent_address.valid" class="text-danger"> {{
+                          app.text.ag_mother_permanent_address
+                          || 'ag_mother_permanent_address' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <h2>Previous Company Details</h2>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_company_name">{{ app.text.ag_company_name || 'ag_company_name' }}</label> -->
+                        <label>Company Name</label>
+                        <app-text-field [(ngModel)]="agent.ag_company_name" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_company_name || 'ag_company_name' }}"
+                          name="ag_company_name" cId="ag_company_name" #ag_company_name="ngModel" required="false">
+                        </app-text-field>
+                        <div [hidden]="ag_company_name.valid" class="text-danger"> {{ app.text.ag_company_name ||
+                          'ag_company_name' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_company_email">{{ app.text.ag_company_email || 'ag_company_email' }}</label> -->
+                        <label>Company Email</label>
+                        <app-text-field [(ngModel)]="agent.ag_company_email" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_company_email || 'ag_company_email' }}"
+                          name="ag_company_email" cId="ag_company_email" #ag_company_email="ngModel" required="false">
+                        </app-text-field>
+                        <div [hidden]="ag_company_email.valid" class="text-danger"> {{ app.text.ag_company_email ||
+                          'ag_company_email' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_company_phoneno">{{ app.text.ag_company_phoneno || 'ag_company_phoneno'
+                          }}</label> -->
+                          <label>Company Phone Number</label>
+                        <app-text-field [(ngModel)]="agent.ag_company_phoneno" type="text" view="phone"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_company_phoneno || 'ag_company_phoneno' }}"
+                          name="ag_company_phoneno" cId="ag_company_phoneno" #ag_company_phoneno="ngModel"
+                          required="false">
+                        </app-text-field>
+
+                        <div [hidden]="ag_company_phoneno.valid" class="text-danger"> {{ app.text.ag_company_phoneno ||
+                          'ag_company_phoneno' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_company_address">{{ app.text.ag_company_address || 'ag_company_address'
+                          }}</label> -->
+                          <label>Company Address</label>
+                        <app-text-area [(ngModel)]="agent.ag_company_address" view="textarea" type="mediumtext"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_company_address || 'ag_company_address' }}"
+                          name="ag_company_address" cId="ag_company_address" #ag_company_address="ngModel"
+                          required="false"></app-text-area>
+                        <div [hidden]="ag_company_address.valid" class="text-danger"> {{ app.text.ag_company_address
+                          || 'ag_company_address' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+
+                  </div>
+                </div>
+                
+                <h4>Reference Details</h4>
+
+                <div class="col-md-12">
+                  <h4>Person 1</h4>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_ref_name_1">{{ app.text.ag_ref_name_1 || 'ag_ref_name_1' }}</label> -->
+                        <label>Reference Name 1</label>
+                        <app-text-field [(ngModel)]="agent.ag_ref_name_1" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_ref_name_1 || 'ag_ref_name_1' }}"
+                          name="ag_ref_name_1" cId="ag_ref_name_1" #ag_ref_name_1="ngModel" required="false">
+                        </app-text-field>
+                        <div [hidden]="ag_ref_name_1.valid" class="text-danger"> {{ app.text.ag_ref_name_1 ||
+                          'ag_ref_name_1'
+                          }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_ref_adhar_1">{{ app.text.ag_ref_adhar_1 || 'ag_ref_adhar_1' }}</label> -->
+                        <label>Reference Aadhar 1</label>
+                        <app-text-field [(ngModel)]="agent.ag_ref_adhar_1" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_ref_adhar_1 || 'ag_ref_adhar_1' }}"
+                          name="ag_ref_adhar_1" cId="ag_ref_adhar_1" #ag_ref_adhar_1="ngModel" required="false">
+                        </app-text-field>
+                        <div [hidden]="ag_ref_adhar_1.valid" class="text-danger"> {{ app.text.ag_ref_adhar_1 ||
+                          'ag_ref_adhar_1' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_ref_phoneno_1">{{ app.text.ag_ref_phoneno_1 || 'ag_ref_phoneno_1' }}</label> -->
+                        <label>Reference Phone Number 1</label>
+                        <app-text-field [(ngModel)]="agent.ag_ref_phoneno_1" type="text" view="phone"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_ref_phoneno_1 || 'ag_ref_phoneno_1' }}"
+                          name="ag_ref_phoneno_1" cId="ag_ref_phoneno_1" #ag_ref_phoneno_1="ngModel"
+                          required="false">
+                        </app-text-field>
+
+                        <div [hidden]="ag_ref_phoneno_1.valid" class="text-danger"> {{ app.text.ag_ref_phoneno_1 ||
+                          'ag_ref_phoneno_1' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_ref_permanent_address_1">{{ app.text.ag_ref_permanent_address_1 ||
+                          'ag_ref_permanent_address_1'
+                          }}</label> -->
+                          <label>Reference Permanant Address 1</label>
+                        <app-text-area [(ngModel)]="agent.ag_ref_permanent_address_1" view="textarea" type="mediumtext"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_ref_permanent_address_1 || 'ag_ref_permanent_address_1' }}"
+                          name="ag_ref_permanent_address_1" cId="ag_ref_permanent_address_1"
+                          #ag_ref_permanent_address_1="ngModel" required="false"></app-text-area>
+                        <div [hidden]="ag_ref_permanent_address_1.valid" class="text-danger"> {{
+                          app.text.ag_ref_permanent_address_1
+                          || 'ag_ref_permanent_address_1' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <h4>Person 2</h4>
+                  <div class="row">
+                    <div class="col-md-6">
+
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_ref_name_2">{{ app.text.ag_ref_name_2 || 'ag_ref_name_2' }}</label> -->
+                        <label>Reference Name 2</label>
+                        <app-text-field [(ngModel)]="agent.ag_ref_name_2" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_ref_name_2 || 'ag_ref_name_2' }}"
+                          name="ag_ref_name_2" cId="ag_ref_name_2" #ag_ref_name_2="ngModel" required="false">
+                        </app-text-field>
+                        <div [hidden]="ag_ref_name_2.valid" class="text-danger"> {{ app.text.ag_ref_name_2 ||
+                          'ag_ref_name_2'
+                          }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_ref_adhar_2">{{ app.text.ag_ref_adhar_2 || 'ag_ref_adhar_2' }}</label> -->
+                        <label>Reference Aadhar 2</label>
+                        <app-text-field [(ngModel)]="agent.ag_ref_adhar_2" type="text" view="input"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_ref_adhar_2 || 'ag_ref_adhar_2' }}"
+                          name="ag_ref_adhar_2" cId="ag_ref_adhar_2" #ag_ref_adhar_2="ngModel" required="false">
+                        </app-text-field>
+                        <div [hidden]="ag_ref_adhar_2.valid" class="text-danger"> {{ app.text.ag_ref_adhar_2 ||
+                          'ag_ref_adhar_2' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_ref_phoneno_2">{{ app.text.ag_ref_phoneno_2 || 'ag_ref_phoneno_2' }}</label> -->
+                        <label>Reference Phone Number 2</label>
+                        <app-text-field [(ngModel)]="agent.ag_ref_phoneno_2" type="text" view="phone"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_ref_phoneno_2 || 'ag_ref_phoneno_2' }}"
+                          name="ag_ref_phoneno_2" cId="ag_ref_phoneno_2" #ag_ref_phoneno_2="ngModel"
+                          required="false">
+                        </app-text-field>
+
+                        <div [hidden]="ag_ref_phoneno_2.valid" class="text-danger"> {{ app.text.ag_ref_phoneno_2 ||
+                          'ag_ref_phoneno_2' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_ref_permanent_address_2">{{ app.text.ag_ref_permanent_address_2 ||
+                          'ag_ref_permanent_address_2'
+                          }}</label> -->
+                          
+                          <label>Reference Permanant Address 2</label>
+                        <app-text-area [(ngModel)]="agent.ag_ref_permanent_address_2" view="textarea" type="mediumtext"
+                          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ag_ref_permanent_address_2 || 'ag_ref_permanent_address_2' }}"
+                          name="ag_ref_permanent_address_2" cId="ag_ref_permanent_address_2"
+                          #ag_ref_permanent_address_2="ngModel" required="false"></app-text-area>
+                        <div [hidden]="ag_ref_permanent_address_2.valid" class="text-danger"> {{
+                          app.text.ag_ref_permanent_address_2
+                          || 'ag_ref_permanent_address_2' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <h4>Joining Details</h4>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_date_of_joining">{{ app.text.ag_date_of_joining || 'ag_date_of_joining' }}</label> -->
+                        <label>Date of Joining</label>
+                        <app-date-time-picker [(ngModel)]="agent.ag_date_of_joining" name="ag_date_of_joining" cId="ag_date_of_joining" #ag_date_of_joining="ngModel"
+                          required="false"></app-date-time-picker>
+                        <div [hidden]="ag_date_of_joining.valid || ag_date_of_joining.pristine" class="text-danger"> {{
+                          app.text.ag_date_of_joining || 'ag_date_of_joining' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <!-- <label for="ag_documents_provided">{{ app.text.ag_documents_provided || 'ag_documents_provided' }}</label> -->
+                        <label>Documents Provided</label>
+                        <select class="form-control" id="ag_documents_provided" [(ngModel)]="agent.ag_documents_provided" name="ag_documents_provided"
+                          #ag_documents_provided="ngModel" required>
+                          <option value="-1">{{ app.text.select_gender || 'select_gender' }}</option>
+                          <option value="10th">{{ app.text.tenth_mark_sheet || 'tenth_mark_sheet' }}</option>
+                          <option value="12th">{{ app.text.twelveth_mark_sheet || 'twelveth_mark_sheet' }}</option>
+                          <option value="degree">{{ app.text.degree_certificate || 'degree_certificate' }}</option>
+                          <option value="property">{{ app.text.property_documents || 'property_documents' }}</option>
+                          <option value="aadhar">{{ app.text.aadhar || 'aadhar' }}</option>
+                          <option value="pan">{{ app.text.pan || 'pan' }}</option>
+                          <option value="bank">{{ app.text.bank_passbook || 'bank_passbook' }}</option>
+
+                        </select>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="alert alert-dismissible alert-danger" style="margin: 10px" *ngIf="message !== ''">
+                    {{ message }}</div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-round waves-effect float-right"
+                [disabled]="!baseForm.form.valid" *ngIf="loadingText == 'Save'">
+                {{ app.text.save || 'save' }}
+              </button>
+              <button type="submit" class="btn btn-primary btn-round waves-effect float-right" disabled
+                *ngIf="loadingText != 'Save'">
+                {{ app.text.saving || 'saving' }}
+              </button>
+            </form>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

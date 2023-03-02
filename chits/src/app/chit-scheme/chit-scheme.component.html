@@ -1,0 +1,170 @@
+<section class="content">
+  <div class="block-header">
+    <div class="row">
+      <div class="col-lg-7 col-md-6 col-sm-12">
+        <h2>Chit Scheme
+          <small class="text-muted"></small>
+        </h2>
+      </div>
+      <div class="col-lg-5 col-md-6 col-sm-12">
+        <button class="btn btn-primary btn-icon btn-round hidden-sm-down float-right m-l-10" type="button"
+          (click)="add()">
+          <i class="zmdi zmdi-plus"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row clearfix">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="body">
+            <h2 class="card-inside-title"></h2>
+            <div class="row clearfix">
+              <div class="col-md-12">
+                <form (ngSubmit)="onSearchSubmit()" #searchForm="ngForm">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label class="font-weight-normal">{{ app.text.per_page || 'per_page' }}<span
+                            class="required"></span></label>
+                        <select class="custom-select form-control" id="num_per_page" required [(ngModel)]="num_per_page"
+                          name="num_per_page">
+                          <option value="5">5</option>
+                          <option value="10">10</option>
+                          <option value="25">25</option>
+                          <option value="50">50</option>
+                          <option value="100">100</option>
+                          <option value="200">200</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <label for="search">{{ app.text.search || 'search' }}</label>
+                        <app-text-field [(ngModel)]="search" type="text" view="input"
+                          placeholder="{{ app.text.search || 'search' }} {{ app.text.here || 'here' }}" name="search"
+                          cId="search" #searchx="ngModel" required="false"></app-text-field>
+                        <div [hidden]="searchx.valid" class="text-danger"> {{ app.text.search || 'search' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block pull-right waves-effect"
+                          [disabled]="!searchForm.form.valid" style="margin-top: 30px">{{ app.text.search || 'search'
+                          }}</button>
+                      </div>
+                    </div>
+
+                  </div>
+                </form>
+
+              </div>
+              <div class="col-md-12">
+                <div class="body table-responsive">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th> #</th>
+                        <th> Chit Scheme</th>
+                        <th> Chit Month</th>
+                        <!-- <th>{{ app.text.ac_no_of_members || 'ac_no_of_members' }}</th> -->
+                        <!-- <th>{{ app.text.ac_no_of_installment || 'ac_no_of_installment' }}</th>
+                        <th>{{ app.text.ac_log || 'ac_log' }}</th> -->
+                        <th> Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let listItem of schemes;let i=index">
+                        <td>{{i+1}}</td>
+                        <td>{{listItem.cs_chit_scheme}}</td>
+                        <td>{{listItem.cs_chit_month}}</td>
+                        <!-- <td>{{listItem.ac_no_of_members}}</td> -->
+                        <!-- <td>{{listItem.ac_chit_scheme}}</td>
+                        <td>{{convertToDateTime(listItem.ac_log)}}</td> -->
+                        <td><a (click)="editItem(listItem)" style="cursor: pointer;"><img src="assets/images/edit.png" width="20" height="20"></a><span><a (click)="deleteItem(listItem.cs_id)" style="cursor: pointer;"><img src="assets/images/delete.png" width="20" height="20"></a></span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <button class="btn btn-primary btn-block" *ngIf="start_from+received != count && schemes.length > 0"
+                  (click)="moveNext()"><span class="float-left"> {{displayCount}} </span> <span class="float-right">{{
+                    app.text.load_more || 'load_more' }}..</span></button>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<div class="modal fade" id="myModalcs_id" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <form (ngSubmit)="onSubmit()" #baseForm="ngForm">
+        <div class="modal-header">
+          <h4 class="title" id="largeModalLabelcs_id" *ngIf="scheme.cs_id == '-1'">
+            {{ app.text.add || 'Add' }}
+          </h4>
+          <h4 class="title" id="largeModalLabelcs_id" *ngIf="scheme.cs_id != '-1'">
+            {{ app.text.edit || 'Edit' }}
+          </h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+             
+
+          <fieldset class="form-group">
+            <!-- <label for="cs_chit_scheme">{{ app.text.cs_chit_scheme || 'cs_chit_scheme' }}</label> -->
+            <label>Chit Scheme</label>
+            <app-text-field [(ngModel)]="scheme.cs_chit_scheme" type="text" view="input"
+              placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cs_chit_scheme || 'cs_chit_scheme' }}" name="cs_chit_scheme"
+              cId="cs_chit_scheme" #cs_chit_scheme="ngModel" required="false" ></app-text-field>
+            <div [hidden]="cs_chit_scheme.valid" class="text-danger"> {{ app.text.cs_chit_scheme || 'cs_chit_scheme' }} {{
+              app.text.is_required || 'is_required' }}
+            </div>
+          </fieldset>
+
+
+              <fieldset class="form-group">
+                <!-- <label for="cs_chit_value">{{ app.text.cs_chit_month || 'cs_chit_month' }}</label> -->
+                <label>Chit Month</label>
+                <app-text-field [(ngModel)]="scheme.cs_chit_month" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cs_chit_month || 'cs_chit_month' }}"  name="cs_chit_month" 
+                  cId="cs_chit_month" #cs_chit_month="ngModel" required="false" ></app-text-field>
+                <div [hidden]="cs_chit_month.valid" class="text-danger"> {{ app.text.cs_chit_month || 'cs_chit_month' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+
+             
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary btn-round waves-effect" [disabled]="!baseForm.form.valid"
+            *ngIf="loadingText == 'Save'">
+            {{ app.text.save || 'save' }}
+          </button>
+          <button type="submit" class="btn btn-primary btn-round waves-effect" disabled *ngIf="loadingText != 'Save'">
+            {{ app.text.saving || 'saving' }}
+          </button>
+          <button type="button" class="btn btn-danger btn-round waves-effect" data-dismiss="modal">{{ app.text.cancel ||
+            'cancel' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

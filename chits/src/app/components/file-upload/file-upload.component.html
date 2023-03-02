@@ -1,0 +1,19 @@
+<div class="row">
+  <div class="col-md-12 text-center" *ngIf="mPhotoSrc != 'noimg.png'">
+    <a href="{{app.getProfileUrl()+mPhotoSrc}}" target="_blank">{{app.getProfileUrl()+mPhotoSrc}}</a>
+  </div>
+</div>
+<div class="row" *ngIf="uploadBtn == 'true'">
+  <div class="col-md-12">
+    <div class="form-group" style="margin-top: 10px">
+      <label class="btn btn-default btn-danger btn-block" *ngIf="browse == 'Browse'">
+        {{ app.text.browse || 'browse' }}
+        <input type="file" accept="application/pdf,image/*" class="hidden"
+          (change)="changeListener($event,cId)" [id]="cId">
+      </label>
+      <label class="btn btn-default btn-danger btn-block" *ngIf="browse != 'Browse'">
+        {{progress}}
+      </label>
+    </div>
+  </div>
+</div>

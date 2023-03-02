@@ -1,0 +1,773 @@
+
+<section class="content">
+  <div class="block-header">
+    <div class="row">
+      <div class="col-lg-7 col-md-6 col-sm-12">
+        <h2>New Customers
+          <small class="text-muted"></small>
+        </h2>
+      </div>
+      <div class="col-lg-5 col-md-6 col-sm-12">
+        <button class="btn btn-primary btn-icon btn-round hidden-sm-down float-right m-l-10" type="button"
+          (click)="add()">
+          <i class="zmdi zmdi-plus"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row clearfix">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="body">
+            <h2 class="card-inside-title"></h2>
+            <div class="row clearfix">
+              <div class="col-md-12">
+                <form (ngSubmit)="onSearchSubmit()" #searchForm="ngForm">
+                  <div class="row">
+                    <div class="col-md-3">
+                     
+                      <div class="form-group">
+                        <label class="font-weight-normal">{{ app.text.per_page || 'per_page' }}<span
+                            class="required"></span></label>
+                        <select class="custom-select form-control" id="num_per_page" required [(ngModel)]="num_per_page"
+                          name="num_per_page">
+                          <option value="5">5</option>
+                          <option value="10">10</option>
+                          <option value="25">25</option>
+                          <option value="50">50</option>
+                          <option value="100">100</option>
+                          <option value="200">200</option>
+                        </select>
+                      </div> 
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <label for="search">{{ app.text.search || 'search' }}</label>
+                        <app-text-field [(ngModel)]="search" type="text" view="input"
+                          placeholder="{{ app.text.search || 'search' }} {{ app.text.here || 'here' }}" name="search"
+                          cId="search" #searchx="ngModel" required="false"></app-text-field>
+                        <div [hidden]="searchx.valid" class="text-danger"> {{ app.text.search || 'search' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                      <!-- <fieldset class="form-group">
+                        <input type="text" class="form-control search" [(ngModel)]="search" (ngModelChange)="Search()"
+                          placeholder="Search " name="search">
+                      </fieldset> -->
+                    </div>
+
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block pull-right waves-effect"
+                          [disabled]="!searchForm.form.valid" style="margin-top: 30px">{{ app.text.search || 'search'
+                          }}</button>
+                      </div>
+                    </div>
+
+                  </div>
+                </form>
+
+              </div>
+              <div class="col-md-12">
+                <div class="body table-responsive">
+                  <table class="table table-bordered" id="example">
+                    <thead>
+                      <tr>
+                        <th> #</th>
+                        <th>Customer ID</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+
+
+                        <th>{{ app.text.action || 'action' }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let listItem of customers;let i=index">
+                        <td>{{i+1}}</td>
+                        <td>{{listItem.nc_customer_id}}</td>
+                        <td>{{listItem.nc_name}}</td>
+                        <td>{{listItem.nc_phone}}</td>
+                       
+
+                        <td><a (click)="editItem(listItem)" style="cursor: pointer;"><img src="assets/images/edit.png" width="20" height="20"></a><span><a (click)="deleteItem(listItem.nc_id)" style="cursor: pointer;"><img src="assets/images/delete.png" width="20" height="20"></a></span>
+                          <span class="view"><a (click)="viewItem(listItem)" style="cursor: pointer;"><img src="assets/images/view.png" width="20" height="20"></a></span>
+                        </td>
+                        
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <button class="btn btn-primary btn-block" *ngIf="start_from+received != count && customers.length > 0"
+                  (click)="moveNext()"><span class="float-left"> {{displayCount}} </span> <span class="float-right">{{
+                    app.text.load_more || 'load_more' }}..</span></button>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<div class="modal fade" id="myModalnc_id" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <form (ngSubmit)="onSubmit()" #baseForm="ngForm">
+        <div class="modal-header">
+          <h4 class="title" id="largeModalLabelnc_id" *ngIf="customer.nc_id == '-1'">
+            {{ app.text.add || 'add' }}
+          </h4>
+          <h4 class="title" id="largeModalLabelnc_id" *ngIf="customer.nc_id!= '-1'">
+            {{ app.text.edit || 'edit' }}
+          </h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+
+              <div class="row">
+                <div class="col-md-6">
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_name">{{ app.text.nc_name || 'nc_name' }}</label> -->
+                    <label for="nc_name">Name</label>
+                    <app-text-field [(ngModel)]="customer.nc_name" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_name || 'nc_name' }}" name="nc_name"
+                      cId="nc_name" #nc_name="ngModel" required="false"></app-text-field>
+                    <div [hidden]="nc_name.valid" class="text-danger"> {{ app.text.nc_name || 'nc_name' }} {{
+                      app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+    
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_phone">{{ app.text.nc_phone || 'nc_phone' }}</label> -->
+                    <label for="nc_phone">Phone Number</label>
+                    <app-text-field [(ngModel)]="customer.nc_phone" type="text" view="phone"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_phone || 'nc_phone' }}" name="nc_phone"
+                      cId="nc_phone" #nc_phone="ngModel" required="false"></app-text-field>
+    
+                    <div [hidden]="nc_phone.valid" class="text-danger"> {{ app.text.nc_phone || 'nc_phone' }} {{
+                      app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+    
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_dob">{{ app.text.nc_dob || 'nc_dob' }}</label> -->
+                     <label for="nc_dob">Date Of Birth</label>
+                    <app-date-time-picker [(ngModel)]="customer.nc_dob" name="nc_dob" cId="nc_dob" #nc_dob="ngModel"
+                      required="false"></app-date-time-picker>
+                      
+                    <div [hidden]="nc_dob.valid || nc_dob.pristine" class="text-danger"> {{
+                      app.text.nc_dob || 'nc_dob' }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset> 
+               <!-- <fieldset class="form-group">
+                <label for="nc_dob">Date Of Birth</label>
+                <div id="datepicker" class="input-group date" data-date-format="mm-dd-yyyy">
+                  <input class="form-control" type="text"  />
+                  <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+              </div>
+              
+              
+               </fieldset> -->
+               <!-- <fieldset  class="form-group">
+                <div class="datepicker date input-group p-0 shadow-sm">
+                    <input type="text" placeholder="Choose a reservation date" class="form-control py-4 px-4" id="reservationDate">
+                    <div class="input-group-append"><span class="input-group-text px-4"><i class="fa fa-clock-o"></i></span></div>
+                </div>
+               </fieldset> -->
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_gender">{{ app.text.nc_gender || 'nc_gender' }}</label> -->
+                    <label for="nc_gender">Gender</label>
+                    <select class="form-control" id="nc_gender" [(ngModel)]="customer.nc_gender" name="nc_gender"
+                      #nc_gender="ngModel" required>
+                      <option value="-1">{{ app.text.select_gender || 'select_gender' }}</option>
+                      <option value="Male">{{ app.text.male || 'Male' }}</option>
+                      <option value="Female">{{ app.text.female || 'Female' }}</option>
+                    
+                    </select>
+                  </fieldset>
+    
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_present_address">{{ app.text.nc_present_address || 'nc_present_address'
+                      }}</label> -->
+                      <label for="nc_present_address">Address</label>
+                    <app-text-area [(ngModel)]="customer.nc_present_address" view="textarea" type="mediumtext"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_present_address || 'nc_present_address' }}"
+                      name="nc_present_address" cId="nc_present_address" #nc_present_address="ngModel" class="address"
+                      required="false"></app-text-area>
+                    <div [hidden]="nc_present_address.valid" class="text-danger"> {{ app.text.nc_present_address
+                      || 'nc_present_address' }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+    
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_present_city">{{ app.text.nc_present_city || 'nc_present_city' }}</label> -->
+                    <label for="nc_present_city">City</label>
+                    <app-text-field [(ngModel)]="customer.nc_present_city" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_present_city || 'nc_present_city' }}" name="nc_present_city"
+                      cId="nc_present_city" #nc_present_city="ngModel" class="city" required="false"></app-text-field>
+                    <div [hidden]="nc_present_city.valid" class="text-danger"> {{ app.text.nc_present_city || 'nc_present_city' }} {{
+                      app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_present_state">{{ app.text.nc_present_state || 'nc_present_state' }}</label> -->
+                    <label for="nc_present_state">State</label>
+                    <app-text-field [(ngModel)]="customer.nc_present_state" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_present_state || 'nc_present_state' }}" name="nc_present_state"
+                      cId="nc_present_state" #nc_present_state="ngModel" class="state" required="false"></app-text-field>
+                    <div [hidden]="nc_present_state.valid" class="text-danger"> {{ app.text.nc_present_state || 'nc_present_state' }} {{
+                      app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_present_pincode">{{ app.text.nc_present_pincode || 'nc_present_pincode' }}</label> -->
+                    <label for="nc_present_pincode">Pincode</label>
+                    <app-text-field [(ngModel)]="customer.nc_present_pincode" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_present_pincode || 'nc_present_pincode' }}" name="nc_present_pincode"
+                      cId="nc_present_pincode" #nc_present_pincode="ngModel"  class="pincode" required="false"></app-text-field>
+                    <div [hidden]="nc_present_pincode.valid" class="text-danger"> {{ app.text.nc_present_pincode || 'nc_present_pincode' }} {{
+                      app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <label>Click If it is a Permanent Address</label>
+                    <input class="form-check-input" type="checkbox"   id="flexSwitchCheckChecked" 
+                    (onclick)="filladd()" > <!--(change)="toggleButton()" instead of (change) i had used (onclick) -->
+                  </fieldset>
+                  <fieldset class="form-group" *ngIf="switchCase">
+                    <!-- <label for="nc_permanent_address">{{ app.text.nc_permanent_address || 'nc_permanent_address'
+                      }}</label> -->
+                      <label for="nc_permanent_address">Permanent Address</label>
+                    <app-text-area [(ngModel)]="customer.nc_permanent_address" view="textarea" type="mediumtext"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_permanent_address || 'nc_permanent_address' }}"
+                      name="nc_permanent_address" cId="nc_permanent_address" #nc_permanent_address="ngModel" class="address1"
+                      required="false"></app-text-area>
+                    <div [hidden]="nc_permanent_address.valid" class="text-danger"> {{ app.text.nc_permanent_address
+                      || 'nc_permanent_address' }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+    
+                  <fieldset class="form-group" *ngIf="switchCase">
+                    <!-- <label for="nc_permanent_city">{{ app.text.nc_permanent_city || 'nc_permanent_city' }}</label> -->
+                    <label for="nc_permanent_city">City</label>
+                    <app-text-field [(ngModel)]="customer.nc_permanent_city" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_permanent_city || 'nc_permanent_city' }}" name="nc_permanent_city"
+                      cId="nc_permanent_city" #nc_permanent_city="ngModel" class="city1" required="false"></app-text-field>
+                    <div [hidden]="nc_permanent_city.valid" class="text-danger"> {{ app.text.nc_permanent_city || 'nc_permanent_city' }} {{
+                      app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group" *ngIf="switchCase">
+                    <!-- <label for="nc_permanent_state">{{ app.text.nc_permanent_state || 'nc_permanent_state' }}</label> -->
+                    <label>State</label>
+                    <app-text-field [(ngModel)]="customer.nc_permanent_state" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_permanent_state || 'nc_permanent_state' }}" name="nc_permanent_state"
+                      cId="nc_permanent_state" #nc_permanent_state="ngModel"  class="state1" required="false"></app-text-field>
+                    <div [hidden]="nc_permanent_state.valid" class="text-danger"> {{ app.text.nc_permanent_state || 'nc_permanent_state' }} {{
+                      app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group" *ngIf="switchCase">
+                    <!-- <label for="nc_permanent_pincode">{{ app.text.nc_permanent_pincode || 'nc_permanent_pincode' }}</label> -->
+                    <label for="nc_permanent_pincode">Pincode</label>
+                    <app-text-field [(ngModel)]="customer.nc_permanent_pincode" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_permanent_pincode || 'nc_permanent_pincode' }}" name="nc_permanent_pincode"
+                      cId="nc_permanent_pincode" #nc_permanent_pincode="ngModel" class="pincode1" required="false"></app-text-field>
+                    <div [hidden]="nc_permanent_pincode.valid" class="text-danger"> {{ app.text.nc_permanent_pincode || 'nc_permanent_pincode' }} {{
+                      app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_id_proof">{{ app.text.nc_id_proof || 'nc_id_proof' }}</label> -->
+                    <label for="nc_id_proof">ID Proof</label>
+                    <select class="form-control" id="nc_id_proof" [(ngModel)]="customer.nc_id_proof" name="nc_id_proof"
+                      #nc_id_proof="ngModel" required>
+                      <option value="-1">{{ app.text.select_proof || 'select_proof' }}</option>
+                      <option value="Adhar">{{ app.text.adhar || 'adhar' }}</option>
+                      <option value="Voter">{{ app.text.voterid || 'voterid' }}</option>
+                      <option value="Driving">{{ app.text.drivinglicence || 'drivinglicence' }}</option>
+                    </select>
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_id_proof_no">{{ app.text.nc_id_proof_no || 'nc_id_proof_no' }}</label> -->
+                    <label for="nc_id_proof_no">ID Proof Number</label>
+                    <app-text-field [(ngModel)]="customer.nc_id_proof_no" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_id_proof_no || 'nc_id_proof_no' }}"
+                      name="nc_id_proof_no" cId="nc_id_proof_no" #nc_id_proof_no="ngModel" required="false">
+                    </app-text-field>
+                    <div [hidden]="nc_id_proof_no.valid" class="text-danger"> {{ app.text.nc_id_proof_no || 'nc_id_proof_no'
+                      }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_father_name">{{ app.text.nc_father_name || 'nc_father_name' }}</label> -->
+                    <label for="nc_father_name">Father Name</label>
+                    <app-text-field [(ngModel)]="customer.nc_father_name" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_father_name || 'nc_father_name' }}"
+                      name="nc_father_name" cId="nc_father_name" #nc_father_name="ngModel" required="false">
+                    </app-text-field>
+                    <div [hidden]="nc_father_name.valid" class="text-danger"> {{ app.text.nc_father_name || 'nc_father_name'
+                      }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                </div>
+                <div class="col-md-6">
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_profile_photo">{{ app.text.nc_profile_photo || 'nc_profile_photo' }}</label> -->
+                    <label for="nc_profile_photo">Profile Photo</label>
+                    <app-image-upload cId="nc_profile_photo" name="nc_profile_photo" [(ngModel)]="customer.nc_profile_photo"
+                      #nc_profile_photo="ngModel"></app-image-upload>
+                    <div [hidden]="nc_profile_photo.valid || nc_profile_photo.pristine" class="text-danger"> {{
+                      app.text.nc_profile_photo || 'nc_profile_photo' }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                 
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_father_adhar">{{ app.text.nc_father_adhar || 'nc_father_adhar' }}</label> -->
+                    <label for="nc_father_adhar">Father Aadhar</label>
+                    <app-text-field [(ngModel)]="customer.nc_father_adhar" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_father_adhar || 'nc_father_adhar' }}"
+                      name="nc_father_adhar" cId="nc_father_adhar" #nc_father_adhar="ngModel" required="false">
+                    </app-text-field>
+                    <div [hidden]="nc_father_adhar.valid" class="text-danger"> {{ app.text.nc_father_adhar ||
+                      'nc_father_adhar' }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_father_phoneno">{{ app.text.nc_father_phoneno || 'nc_father_phoneno' }}</label> -->
+                    <label for="nc_father_phoneno">Father Phone Number</label>
+                    <app-text-field [(ngModel)]="customer.nc_father_phoneno" type="text" view="phone"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_father_phoneno || 'nc_father_phoneno' }}"
+                      name="nc_father_phoneno" cId="nc_father_phoneno" #nc_father_phoneno="ngModel" required="false">
+                    </app-text-field>
+    
+                    <div [hidden]="nc_father_phoneno.valid" class="text-danger"> {{ app.text.nc_father_phoneno ||
+                      'nc_father_phoneno' }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_mother_name">{{ app.text.nc_mother_name || 'nc_mother_name' }}</label> -->
+                    <label for="nc_mother_name">Mother Name</label>
+                    <app-text-field [(ngModel)]="customer.nc_mother_name" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_mother_name || 'nc_mother_name' }}"
+                      name="nc_mother_name" cId="nc_mother_name" #nc_mother_name="ngModel" required="false">
+                    </app-text-field>
+                    <div [hidden]="nc_mother_name.valid" class="text-danger"> {{ app.text.nc_mother_name || 'nc_mother_name'
+                      }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_mother_adhar">{{ app.text.nc_mother_adhar || 'nc_mother_adhar' }}</label> -->
+                    <label for="nc_mother_adhar">Mother Aadhar</label>
+                    <app-text-field [(ngModel)]="customer.nc_mother_adhar" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_mother_adhar || 'nc_mother_adhar' }}"
+                      name="nc_mother_adhar" cId="nc_mother_adhar" #nc_mother_adhar="ngModel" required="false">
+                    </app-text-field>
+                    <div [hidden]="nc_mother_adhar.valid" class="text-danger"> {{ app.text.nc_mother_adhar ||
+                      'nc_mother_adhar' }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_martial_status">{{ app.text.nc_martial_status || 'nc_martial_status' }}</label> -->
+                    <label for="nc_martial_status">Martial Status</label>
+                    <select class="form-control" id="nc_martial_status" [(ngModel)]="customer.nc_martial_status"
+                      name="nc_martial_status" #nc_martial_status="ngModel" required>
+                      <option value="-1">{{ app.text.select_martial_status || 'select_martial_status' }}</option>
+                      <option value="Single">{{ app.text.single || 'single' }}</option>
+                      <option value="Married">{{ app.text.married || 'married' }}</option>
+    
+    
+                    </select>
+                  </fieldset>
+                  <!-- <fieldset class="form-group">
+                    <label for="nc_nominee">{{ app.text.nc_nominee || 'nc_nominee' }}</label>
+                    <app-text-field [(ngModel)]="customer.nc_nominee" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_nominee || 'nc_nominee' }}"
+                      name="nc_nominee" cId="nc_nominee" #nc_nominee="ngModel" required="false">
+                    </app-text-field>
+                    <div [hidden]="nc_nominee.valid" class="text-danger"> {{ app.text.nc_nominee ||
+                      'nc_nominee' }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset> -->
+                  <!-- <fieldset class="form-group">
+                    <label for="nc_reference_name_1">{{ app.text.nc_reference_name_1 || 'nc_reference_name_1' }}</label>
+                    <app-text-field [(ngModel)]="customer.nc_reference_name_1" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_reference_name_1 || 'nc_reference_name_1' }}"
+                      name="nc_reference_name_1" cId="nc_reference_name_1" #nc_reference_name_1="ngModel" required="false">
+                    </app-text-field>
+                    <div [hidden]="nc_reference_name_1.valid" class="text-danger"> {{ app.text.nc_reference_name_1 ||
+                      'nc_reference_name_1' }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <label for="nc_reference_phone_1">{{ app.text.nc_reference_phone_1 || 'nc_reference_phone_1' }}</label>
+                    <app-text-field [(ngModel)]="customer.nc_reference_phone_1" type="text" view="phone"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_reference_phone_1 || 'nc_reference_phone_1' }}" name="nc_reference_phone_1"
+                      cId="nc_reference_phone_1" #nc_reference_phone_1="ngModel" required="false"></app-text-field>
+    
+                    <div [hidden]="nc_reference_phone_1.valid" class="text-danger"> {{ app.text.nc_reference_phone_1 || 'nc_reference_phone_1' }} {{
+                      app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <label for="nc_reference_name_2">{{ app.text.nc_reference_name_2 || 'nc_reference_name_2' }}</label>
+                    <app-text-field [(ngModel)]="customer.nc_reference_name_2" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_reference_name_2 || 'nc_reference_name_2' }}"
+                      name="nc_reference_name_2" cId="nc_reference_name_2" #nc_reference_name_2="ngModel" required="false">
+                    </app-text-field>
+                    <div [hidden]="nc_reference_name_2.valid" class="text-danger"> {{ app.text.nc_reference_name_2 ||
+                      'nc_reference_name_2' }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <label for="nc_reference_phone_2">{{ app.text.nc_reference_phone_2 || 'nc_reference_phone_2' }}</label>
+                    <app-text-field [(ngModel)]="customer.nc_reference_phone_2" type="text" view="phone"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_reference_phone_2 || 'nc_reference_phone_2' }}" name="nc_reference_phone_2"
+                      cId="nc_reference_phone_2" #nc_reference_phone_2="ngModel" required="false"></app-text-field>
+    
+                    <div [hidden]="nc_reference_phone_2.valid" class="text-danger"> {{ app.text.nc_reference_phone_2 || 'nc_reference_phone_2' }} {{
+                      app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset> -->
+                  <fieldset class="form-group" *ngIf="customer.nc_martial_status=='Married'">
+                    <!-- <label for="nc_spouse_name">{{ app.text.nc_spouse_name || 'nc_spouse_name' }}</label> -->
+                    <label for="nc_spouse_name">Spouse Name</label>
+                    <app-text-field [(ngModel)]="customer.nc_spouse_name" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_spouse_name || 'nc_spouse_name' }}"
+                      name="nc_spouse_name" cId="nc_spouse_name" #nc_spouse_name="ngModel" required="false">
+                    </app-text-field>
+                    <div [hidden]="nc_spouse_name.valid" class="text-danger"> {{ app.text.nc_spouse_name || 'nc_spouse_name'
+                      }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group" *ngIf="customer.nc_martial_status=='Married'">
+                    <!-- <label for="nc_spouse_adhar">{{ app.text.nc_spouse_adhar || 'nc_spouse_adhar' }}</label> -->
+                    <label for="nc_spouse_adhar">Spouse Aadhar</label>
+                    <app-text-field [(ngModel)]="customer.nc_spouse_adhar" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_spouse_adhar || 'nc_spouse_adhar' }}"
+                      name="nc_spouse_adhar" cId="nc_spouse_name" #nc_spouse_adhar="ngModel" required="false">
+                    </app-text-field>
+                    <div [hidden]="nc_spouse_adhar.valid" class="text-danger"> {{ app.text.nc_spouse_adhar ||
+                      'nc_spouse_adhar' }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group" *ngIf="customer.nc_martial_status=='Married'">
+                    <!-- <label for="nc_spouse_phoneno">{{ app.text.nc_spouse_phoneno || 'nc_spouse_phoneno' }}</label> -->
+                    <label for="nc_spouse_phoneno">Spouse Phone Number</label>
+                    <app-text-field [(ngModel)]="customer.nc_spouse_phoneno" type="text" view="phone"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_spouse_phoneno || 'nc_spouse_phoneno' }}"
+                      name="nc_spouse_phoneno" cId="nc_spouse_phoneno" #nc_spouse_phoneno="ngModel" required="false">
+                    </app-text-field>
+    
+                    <div [hidden]="nc_spouse_phoneno.valid" class="text-danger"> {{ app.text.nc_spouse_phoneno ||
+                      'nc_spouse_phoneno' }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+    
+                  <fieldset class="form-group" >
+                    <!-- <label for="nc_reference_name_1">{{ app.text.nc_reference_name_1 || 'nc_reference_name_1' }}</label> -->
+                    <label for="nc_reference_name_1">Reference Name 1</label>
+                    <app-text-field [(ngModel)]="customer.nc_reference_name_1" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_reference_name_1 || 'nc_reference_name_1' }}"
+                      name="nc_reference_name_1" cId="nc_reference_name_1" #nc_reference_name_1="ngModel" required="false">
+                    </app-text-field>
+                    <div [hidden]="nc_reference_name_1.valid" class="text-danger"> {{ app.text.nc_reference_name_1 || 'nc_reference_name_1'
+                      }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+    
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_reference_phone_1">{{ app.text.nc_reference_phone_1 || 'nc_reference_phone_1' }}</label> -->
+                    <label for="nc_reference_phone_1">Reference Phone Number 1</label>
+                    <app-text-field [(ngModel)]="customer.nc_reference_phone_1" type="text" view="phone"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_reference_phone_1 || 'nc_reference_phone_1' }}"
+                      name="nc_reference_phone_1" cId="nc_reference_phone_1" #nc_reference_phone_1="ngModel" required="false">
+                    </app-text-field>
+    
+                    <div [hidden]="nc_reference_phone_1.valid" class="text-danger"> {{ app.text.nc_reference_phone_1 ||
+                      'nc_reference_phone_1' }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+    
+                  <fieldset class="form-group" >
+                    <!-- <label for="nc_reference_name_2">{{ app.text.nc_reference_name_2 || 'nc_reference_name_2' }}</label> -->
+                    <label for="nc_reference_name_2">Reference Name 2</label>
+                    <app-text-field [(ngModel)]="customer.nc_reference_name_2" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_reference_name_2 || 'nc_reference_name_2' }}"
+                      name="nc_reference_name_2" cId="nc_reference_name_2" #nc_reference_name_2="ngModel" required="false">
+                    </app-text-field>
+                    <div [hidden]="nc_reference_name_2.valid" class="text-danger"> {{ app.text.nc_reference_name_2 || 'nc_reference_name_2'
+                      }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+    
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_reference_phone_2">{{ app.text.nc_reference_phone_2 || 'nc_reference_phone_2' }}</label> -->
+                    <label for="nc_reference_name_2">Reference Phone Number</label>
+                    <app-text-field [(ngModel)]="customer.nc_reference_phone_2" type="text" view="phone"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_reference_phone_2 || 'nc_reference_phone_2' }}"
+                      name="nc_reference_phone_2" cId="nc_reference_phone_2" #nc_reference_phone_2="ngModel" required="false">
+                    </app-text-field>
+    
+                    <div [hidden]="nc_reference_phone_2.valid" class="text-danger"> {{ app.text.nc_reference_phone_2 ||
+                      'nc_reference_phone_2' }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+    
+                  <fieldset class="form-group" >
+                    <!-- <label for="nc_nominee_name">{{ app.text.nc_nominee_name || 'nc_nominee_name' }}</label> -->
+                    <label for="nc_reference_name_2">Nominee Name</label>
+                    <app-text-field [(ngModel)]="customer.nc_nominee_name" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_nominee_name || 'nc_nominee_name' }}"
+                      name="nc_nominee_name" cId="nc_nominee_name" #nc_nominee_name="ngModel" required="false">
+                    </app-text-field>
+                    <div [hidden]="nc_nominee_name.valid" class="text-danger"> {{ app.text.nc_nominee_name || 'nc_nominee_name'
+                      }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+    
+                  <fieldset class="form-group">
+                    <!-- <label for="nc_nominee_phone">{{ app.text.nc_nominee_phone || 'nc_nominee_phone' }}</label> -->
+                    <label for="nc_reference_name_2">Nominee Phone Number</label>
+                    <app-text-field [(ngModel)]="customer.nc_nominee_phone" type="text" view="phone"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_nominee_phone || 'nc_nominee_phone' }}"
+                      name="nc_nominee_phone" cId="nc_nominee_phone" #nc_nominee_phone="ngModel" required="false">
+                    </app-text-field>
+    
+                    <div [hidden]="nc_nominee_phone.valid" class="text-danger"> {{ app.text.nc_nominee_phone ||
+                      'nc_nominee_phone' }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+    
+                  <fieldset class="form-group" >
+                    <!-- <label for="nc_nominee_relationship">{{ app.text.nc_nominee_relationship || 'nc_nominee_relationship' }}</label> -->
+                    <label for="nc_reference_name_2">Nominee Relationship</label>
+                    <app-text-field [(ngModel)]="customer.nc_nominee_relationship" type="text" view="input"
+                      placeholder="{{ app.text.enter || 'enter' }} {{ app.text.nc_nominee_relationship || 'nc_nominee_relationship' }}"
+                      name="nc_nominee_relationship" cId="nc_nominee_relationship" #nc_nominee_relationship="ngModel" required="false">
+                    </app-text-field>
+                    <div [hidden]="nc_nominee_relationship.valid" class="text-danger"> {{ app.text.nc_nominee_relationship || 'nc_nominee_relationship'
+                      }} {{ app.text.is_required || 'is_required' }}
+                    </div>
+                  </fieldset>
+                  
+                </div>
+              </div>
+             
+            
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary btn-round waves-effect" [disabled]="!baseForm.form.valid"
+            *ngIf="loadingText == 'Save'">
+            {{ app.text.save || 'save' }}
+          </button>
+          <button type="submit" class="btn btn-primary btn-round waves-effect" disabled *ngIf="loadingText != 'Save'">
+            {{ app.text.saving || 'saving' }}
+          </button>
+          <button type="button" class="btn btn-danger btn-round waves-effect" data-dismiss="modal">{{ app.text.cancel ||
+            'cancel' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!----------------------------------------------------------------------------VIEW DETAILS--------------------------------------------------------------------------------------------->
+<div class="modal fade" id="myModalviewnc_id" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <form (ngSubmit)="onSubmit()" #baseForm="ngForm">
+        <div class="modal-header">
+          <h4 class="title" id="largeModalLabelnc_id">
+            {{ app.text.view || 'view' }}
+          </h4>
+          
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="container">
+                <div class="row">
+                  <div class="col-lg-offset-2 col-lg-8">
+                    <section class="panel panel-default" id="cust">
+                      <div class="panel-body">
+                        <div class="col-md-6 profile">
+                          <article class="panel-body">
+                            <figure class="text-center">
+                              <app-image-thumbnail cId="nc_profile_photo" name="nc_profile_photo" [(ngModel)]="customer.nc_profile_photo"
+                              #nc_profile_photo="ngModel" class="profile"></app-image-thumbnail>
+                             
+                            </figure>
+                          </article>
+                        </div>
+                          
+                            <article>
+                              <h4>
+                                                  <strong>Personal Details</strong>
+                                              </h4>
+                              <hr>
+                              
+                              <dl class="dl-horizontal">
+                                <div class="col-md-12">
+                                  <div class="row">
+                                    <div class="col-md-4 first">
+                                      <dt>Name:</dt>
+                                <dd>{{customer.nc_name}}</dd>
+                                <dt>Address:</dt>
+                                <dd>{{customer.nc_present_address}}</dd>
+                                <dt>Phone number:</dt>
+                                <dd>{{customer.nc_phone}}</dd>
+                                <dt>Date of Birth:</dt>
+                                <dd>{{customer.nc_dob}}</dd>
+                                <dt>Gender:</dt>
+                                <dd>{{customer.nc_gender}}</dd>
+                                <dt>Martial Status:</dt>
+                                <dd>{{customer.nc_martial_status}}</dd>
+                                <dt *ngIf="customer.nc_martial_status=='Married'">Spouse Name:</dt>
+                                <dd *ngIf="customer.nc_martial_status=='Married'">{{customer.nc_spouse_name}}</dd>
+                                <dt *ngIf="customer.nc_martial_status=='Married'">Spouse Aadhar:</dt>
+                                <dd *ngIf="customer.nc_martial_status=='Married'">{{customer.nc_spouse_adhar}}</dd>
+                                
+                               
+                                    </div>
+                                    <div class="col-md-4 second">
+                                      <dt *ngIf="customer.nc_martial_status=='Married'">Spouse Phone Number:</dt>
+                                <dd *ngIf="customer.nc_martial_status=='Married'">{{customer.nc_spouse_phoneno}}</dd>
+                                      <dt>ID Proof:</dt>
+                                      <dd>{{customer.nc_id_proof}}</dd>
+                                <dt>ID Proof Number:</dt>
+                                <dd>{{customer.nc_id_proof_no}}</dd>
+                                <dt> Father Name:</dt>
+                                <dd>{{customer.nc_father_name}}</dd>
+                                
+                                    </div>
+                                    <div class="col-md-4 third">
+                                      <dt>Father Phone Number:</dt>
+                                <dd>{{customer.nc_father_phoneno}}</dd>
+                                <dt>Father Aadhar Number:</dt>
+                                <dd>{{customer.nc_father_adhar}}</dd>
+                                <dt>Mother Name:</dt>
+                                <dd>{{customer.nc_mother_name}}</dd>
+                                <dt>Mother Aadhar Number:</dt>
+                                <dd>{{customer.nc_mother_adhar}}</dd>
+                                    </div>
+                                  </div>
+                                </div>
+                                
+                               
+                               
+                                
+                               
+                              </dl>
+                            </article>
+                            <article>
+                              <h4>
+                                                  <strong>Reference 1</strong>
+                                              </h4>
+                              <hr>
+                              <dl class="dl-horizontal">
+                                <div class="col-md-12">
+                                  <div class="row">
+                                    <div class="col-md-6 ">
+                                      <dt>Reference Name:</dt>
+                                      <dd>{{customer.nc_reference_name_1}}</dd>
+                                    </div>
+                                    <div class="col-md-6">
+                                      <dt>Reference Phone Number:</dt>
+                                      <dd>{{customer.nc_reference_phone_1}}</dd>
+                                    </div>
+                                  </div>
+                                </div>
+                               
+                               
+                              </dl>
+                            </article>
+                            <article>
+                              <h4>
+                                                  <strong>Reference 2</strong>
+                                              </h4>
+                              <hr>
+                              <dl class="dl-horizontal">
+                                <div class="col-md-12">
+                                  <div class="row">
+                                    <div class="col-md-6">
+                                      <dt>Reference Name: </dt>
+                                      <dd>{{customer.nc_reference_name_2}}</dd>
+                                    </div>
+                                    <div class="col-md-6">
+                                      <dt>Reference Phone Number:</dt>
+                                      <dd>{{customer.nc_reference_name_2}}</dd>
+                                    </div>
+                                  </div>
+                                </div>
+                               
+                              
+                              </dl>
+                            </article>
+                            <article>
+                              <h4>
+                                                  <strong>Nominee</strong>
+                                              </h4>
+                              <hr>
+                              <dl class="dl-horizontal">
+                                <div class="col-md-12">
+                                  <div class="row">
+                                    <div class="col-md-4 n1">
+                                      <dt>Nominee name:</dt>
+                                      <dd>{{customer.nc_nominee_name}}</dd>
+                                    </div>
+                                    <div class="col-md-4 n2">
+                                      <dt>Nominee Phone:</dt>
+                                      <dd>{{customer.nc_nominee_phone}}</dd>
+                                    </div>
+                                    <div class="col-md-4 n3">
+                                      <dt>Nominee Relationship:</dt>
+                                      <dd>{{customer.nc_nominee_relationship}}</dd>
+                                    </div>
+                                  </div>
+                                </div>
+                               
+                               
+                               
+                              </dl>
+                            </article>
+                          
+                        
+                        </div>
+                       
+                        <br>
+                  
+                       
+                      
+                       
+                      
+                    </section>
+                  </div>
+                </div>
+              </div>
+        <button type="button" class="btn btn-secondary print" printTitle="MyTitle"  printSectionId="cust" ngxPrint >Print</button>
+        <!-- <button (click)="resumeForm.valid ? generatePdf('open') : ''"
+        class="btn btn-secondary d-flex align-items-center justify-content-center mb-1">
+        <i class="material-icons">
+          picture_as_pdf
+        </i> <span>&nbsp;Open PDF</span></button>  -->
+      </div>
+          </div>
+        </div>
+       
+      </form>
+    </div>
+  </div>
+</div>

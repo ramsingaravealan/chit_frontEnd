@@ -1,0 +1,498 @@
+<section class="content">
+  
+  <div class="block-header">
+    <div class="row">
+      <div class="col-lg-7 col-md-6 col-sm-12">
+        <h2>Add Chits
+          <small class="text-muted"></small>
+        </h2>
+      </div>
+      <div class="col-lg-5 col-md-6 col-sm-12">
+        <button class="btn btn-primary btn-icon btn-round hidden-sm-down float-right m-l-10" type="button"
+          (click)="add()">
+          <i class="zmdi zmdi-plus"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row clearfix">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="body">
+            <h2 class="card-inside-title"></h2>
+            <div class="row clearfix">
+              <div class="col-md-12">
+                <form (ngSubmit)="onSearchSubmit()" #searchForm="ngForm">
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <label class="font-weight-normal">{{ app.text.per_page || 'per_page' }}<span
+                            class="required"></span></label>
+                        <select class="custom-select form-control" id="num_per_page" required [(ngModel)]="num_per_page"
+                          name="num_per_page">
+                          <option value="5">5</option>
+                          <option value="10">10</option>
+                          <option value="25">25</option>
+                          <option value="50">50</option>
+                          <option value="100">100</option>
+                          <option value="200">200</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <label for="search">{{ app.text.search || 'search' }}</label>
+                        <app-text-field [(ngModel)]="search" type="text" view="input"
+                          placeholder="{{ app.text.search || 'search' }} {{ app.text.here || 'here' }}" name="search"
+                          cId="search" #searchx="ngModel" required="false"></app-text-field>
+                        <div [hidden]="searchx.valid" class="text-danger"> {{ app.text.search || 'search' }} {{
+                          app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                    </div>
+
+                    <div class="col-md-3">
+                      <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block pull-right waves-effect"
+                          [disabled]="!searchForm.form.valid" style="margin-top: 30px">{{ app.text.search || 'search'
+                          }}</button>
+                      </div>
+                    </div>
+
+                  </div>
+                </form>
+
+              </div>
+              <div class="col-md-12">
+                <div class="body table-responsive">
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th> #</th>
+                        <th>Chit Scheme</th>
+                        <th> Chit Value</th>
+                        <th> No.of Memebers</th>
+                        <th> Date Of Joining</th>
+                        <!-- <th>{{ app.text.ac_no_of_installment || 'ac_no_of_installment' }}</th>
+                        <th>{{ app.text.ac_log || 'ac_log' }}</th> -->
+                        <th>Action</th>
+                        <th>Customers</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let listItem of chits;let i=index">
+                        <td>{{i+1}}</td>
+                        <td>{{listItem.cs_chit_scheme}}</td>
+                        <td>{{listItem.cv_chit_value}}</td>
+                        <td>{{listItem.ac_no_of_members}}</td>
+                        <td>{{listItem.ac_date_of_joining}}</td>
+                        <!-- <td>{{listItem.ac_chit_scheme}}</td>
+                        <td>{{convertToDateTime(listItem.ac_log)}}</td> -->
+                        <td><a (click)="editItem(listItem)" style="cursor: pointer;"><img src="assets/images/edit.png" width="20" height="20"></a><span><a (click)="deleteItem(listItem.ac_id)" style="cursor: pointer;"><img src="assets/images/delete.png" width="20" height="20"></a></span>
+                        </td>
+                        <td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal_cust" (click)="showModal(listItem.ac_id)">Add customer</button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <button class="btn btn-primary btn-block" *ngIf="start_from+received != count && chits.length > 0"
+                  (click)="moveNext()"><span class="float-left"> {{displayCount}} </span> <span class="float-right">{{
+                    app.text.load_more || 'load_more' }}..</span></button>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<div class="modal fade" id="myModalac_id" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <form (ngSubmit)="onSubmit()" #baseForm="ngForm">
+        <div class="modal-header">
+          <h4 class="title" id="largeModalLabelac_id" *ngIf="chit.ac_id == '-1'">
+            {{ app.text.add || 'Add' }}
+          </h4>
+          <h4 class="title" id="largeModalLabelac_id" *ngIf="chit.ac_id != '-1'">
+            {{ app.text.edit || 'Edit' }}
+          </h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12">
+              <!-- <fieldset class="form-group">
+                <label for="ac_name">{{ app.text.ac_name || 'ac_name' }}</label>
+                <app-select cId="ac_name" name="ac_name" #ac_name="ngModel"
+                  placeholder="{{app.text.select || 'select'}} {{app.text.select_name || 'select_name'}}"
+                  [(ngModel)]="chit.ac_name" required="false" 
+                  [payload]="ac_name_payload" url="addchit/get_all_newcustomers" (change)="onSampleChangedOnSearch($event,value)" 
+                  selectedUrl="addchit/get_all_newcustomers"></app-select>
+                <div [hidden]="ac_name.valid || ac_name.pristine" class="text-danger"> {{
+                  app.text.ac_name || 'ac_name' }} {{ app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset> -->
+             
+              <!-- <fieldset class="form-group">
+                <label for="ac_customer_id">{{ app.text.ac_customer_id || 'ac_customer_id' }}</label>
+                <app-select cId="ac_customer_id" name="ac_customer_id" #ac_customer_id="ngModel" 
+                placeholder="{{app.text.select || 'select'}} {{app.text.ac_customer_id || 'ac_customer_id'}}" 
+                [(ngModel)]="chit.ac_customer_id" required="false"  [payload]="ac_customer_id_payload"  (change)="onSampleChangedOnSearch($event,value)" 
+                url="addchit/get_all_newcustomer" selectedUrl="addchit/get_all_newcustomer"></app-select>
+                <div [hidden]="ac_customer_id.valid || ac_customer_id.pristine" class="text-danger"> {{ app.text.ac_customer_id || 'ac_customer_id' }} {{ app.text.is_required || 'is_required' }}
+                </div>
+            </fieldset> -->
+            <!-- <fieldset class="form-group">
+              <label for="ac_name">Customer Id</label>
+              <select class="form-control input-lg"  [(ngModel)]="chit.ac_customer_id" name="ac_customer_id"  style="width:100%" (change)="firstDropDownChanged($event.target.value)" >
+                <option value="-1">Select</option>
+                
+                <option *ngFor='let customer of unmatched; let i = index'  [value]="customer.nc_customer_id" >{{ customer.nc_customer_id }}</option>
+              </select>
+            </fieldset> -->
+          
+        
+            <!-- <fieldset class="form-group">
+              <label for="">simple</label>
+              <select id="single" class="form-control input-lg " [(ngModel)]="chit.ac_customer_id"  style="width:100%" (change)="selectedPriceListIndex = $event.target.value">
+                <option value="-1">{{ app.text.select || 'select' }}</option>
+                <option *ngFor="let customer of customers; let i = index" [value]="customer.nc_customer_id"  >{{customer.nc_customer_id}}</option>
+              </select>
+              
+            </fieldset> -->
+            <!-- <fieldset class="form-group">
+              <label for="">name</label>
+              <select id="single1" class="form-control input-lg " [(ngModel)]="chit.ac_name"  style="width:100%"  >
+                <option value="-1">{{ app.text.select || 'select' }}</option>
+                <option *ngFor="let customer of customers.selectedPriceListIndex?.customer.nc_name"  >{{customer.nc_name}}</option>
+              </select>
+              
+            </fieldset> -->
+            <!-- <fieldset class="form-group">
+              <label>{{ app.text.ac_customer_id || 'ac_customer_id' }}</label>
+              <app-select cId="ac_customer_id" name="ac_customer_id"
+                placeholder="{{ app.text.select || 'select' }} {{ app.text.ac_customer_id || 'ac_customer_id' }}"
+                [(ngModel)]="chit.ac_customer_id" required="false" #ac_customer_idx="ngModel"
+                (change)="onCustomerIdChangedOnSearch($event,value)" [payload]="ac_customer_id_payload"
+                url="addchit/get_all_newcustomer" selectedUrl="addchit/get_selected_newcustomer">
+              </app-select>
+              <div [hidden]="ac_customer_idx.valid || ac_customer_idx.pristine"
+                class="text-danger">
+                {{ app.text.select || 'select' }} {{ app.text.ac_customer_id || 'ac_customer_id' }} </div>
+            </fieldset> -->
+
+            <!-- <fieldset class="form-group">
+             
+              <label for="ac_name">Name</label>
+              <app-text-field [(ngModel)]="chit.ac_name" type="text" view="input"
+                placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ac_name || 'ac_name' }}" name="ac_name"
+                cId="ac_name" #ac_name="ngModel" required="false"></app-text-field>
+              <div [hidden]="ac_name.valid" class="text-danger"> {{ app.text.ac_name || 'ac_name' }} {{
+                app.text.is_required || 'is_required' }}
+              </div>
+            </fieldset>
+            <fieldset class="form-group">
+            
+              <label for="ac_phone">Phone Number</label>
+              <app-text-field [(ngModel)]="chit.ac_phone" type="text" view="input"
+                placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ac_phone || 'ac_phone' }}" name="ac_phone"
+                cId="ac_phone" #ac_phone="ngModel" required="false"></app-text-field>
+              <div [hidden]="ac_phone.valid" class="text-danger"> {{ app.text.ac_phone || 'ac_phone' }} {{
+                app.text.is_required || 'is_required' }}
+              </div>
+            </fieldset> -->
+            <!-- <fieldset class="form-group">
+              <label>{{ app.text.ac_name || 'ac_name' }}</label>
+              <app-select cId="ac_name" name="ac_name"
+                placeholder="{{ app.text.select || 'select' }} {{ app.text.ac_name || 'ac_name' }}"
+                [(ngModel)]="chit.ac_name" required="false" #ac_namex="ngModel"
+                (change)="onNameChangedOnSearch($event)" [payload]="ac_customer_id_payload"
+                url="addchit/get_all_newcustomers">
+              </app-select>
+              <div [hidden]="ac_namex.valid || ac_namex.pristine"
+                class="text-danger">
+                {{ app.text.select || 'select' }} {{ app.text.ac_name || 'ac_name' }} </div>
+            </fieldset> -->
+              <!-- <fieldset class="form-group">
+                <label for="ac_name">{{ app.text.ac_name || 'ac_name' }}</label>
+                <app-select cId="ac_name" name="ac_name" #ac_name="ngModel" 
+                placeholder="{{app.text.select || 'select'}} {{app.text.ac_name || 'ac_name'}}" 
+                [(ngModel)]="chit.ac_name" required="false" (change)="onNameChangedOnSearch($event)" [payload]="ac_name_payload_search" 
+                url="addchit/get_all_newcustomers" selectedUrl="addchit/get_all_newcustomers"></app-select>
+                <div [hidden]="ac_name.valid || ac_name.pristine" class="text-danger"> {{ app.text.ac_name || 'ac_name' }} {{ app.text.is_required || 'is_required' }}
+                </div>
+            </fieldset> -->
+            <!-- <fieldset class="form-group">
+              <label>{{ app.text.ac_chit_scheme || 'ac_chit_scheme' }}</label>
+              <app-select cId="ac_chit_scheme" name="ac_chit_scheme"
+                placeholder="{{ app.text.select || 'select' }} {{ app.text.ac_chit_scheme || 'ac_chit_scheme' }}"
+                [(ngModel)]="chit.ac_chit_scheme" required="false" #ac_chit_scheme="ngModel"
+                (change)="onChitschemeIdChanged($event)" [payload]="ac_chit_scheme_payload"
+                url="addchit/get_all_chitscheme" selectedUrl="">
+              </app-select>
+              <div [hidden]="ac_chit_scheme.valid || ac_chit_scheme.pristine"
+                class="text-danger">
+                {{ app.text.select || 'select' }} {{ app.text.ac_chit_scheme || 'ac_chit_scheme' }} </div>
+            </fieldset> -->
+
+            <!-- <fieldset class="form-group">
+             
+              <label for="">Chit Scheme</label>
+              <select class="form-control input-lg"  id="mylist"   [(ngModel)]="chit.ac_chit_scheme" name="ac_chit_scheme"  style="width:100%" (change)="onChitschemeIdChanged($event.target.value)" >
+                <option value="-1">Select</option>
+                <option *ngFor='let scheme of schemes'  [value]="scheme.cs_chit_scheme">{{ scheme.cs_chit_scheme }}</option>
+              </select>
+            </fieldset> -->
+
+            <!-- <fieldset class="form-group">
+             
+              <label for="">Chit Group</label>
+              <select class="form-control input-lg"  id="mylist"   [(ngModel)]="chit.ac_cg_id" name="ac_cg_id"  style="width:100%" (change)="onChitschemeIdChanged($event.target.value)" >
+                <option value="-1">Select</option>
+                <option *ngFor='let chitgroup of chitgroups'  [value]="chitgroup.cg_group_name">{{ chitgroup.cg_group_name }}</option>
+              </select>
+            </fieldset> -->
+            <fieldset class="form-group">
+                 
+              <label>Chit Group </label>
+              <app-select cId="ac_cg_id" name="ac_cg_id" #ac_cg_id="ngModel" placeholder="{{app.text.select || 'select'}} {{app.text.ac_cg_id || 'ac_cg_id'}}" [(ngModel)]="chit.ac_cg_id" required="false"                                                                          
+              [payload]="ac_cg_id_payload"
+                      url="addchit/get_all_chitgroup" selectedUrl="addchit/get_selected_chitgroup" (change)="onChitschemeIdChanged($event)" ></app-select>
+              <div [hidden]="ac_cg_id.valid || ac_cg_id.pristine"
+                class="text-danger">
+                {{ app.text.select || 'select' }} {{ app.text.ac_cg_id || 'ac_cg_id' }} </div>
+            </fieldset>
+
+           
+              <!-- <fieldset class="form-group">
+                <label for="ac_chit_scheme">{{ app.text.ac_chit_scheme || 'ac_chit_scheme' }}</label>
+                <app-select cId="ac_chit_scheme" name="ac_chit_scheme" #ac_chit_scheme="ngModel"
+                  placeholder="{{app.text.select || 'select'}} {{app.text.select_scheme || 'select_scheme'}}"
+                  [(ngModel)]="chit.ac_chit_scheme" required="false" (change)="onChitschemeIdChanged($event)"
+                  [payload]="ac_chit_scheme_payload" url="addchit/get_all_chitscheme" 
+                  selectedUrl="addchit/get_all_chitscheme"></app-select>
+                  <div [hidden]="ac_chit_scheme.valid || ac_chit_scheme.pristine"
+                  class="text-danger">
+                  {{ app.text.select || 'select' }} {{ app.text.ac_chit_scheme || 'ac_chit_scheme' }} </div>
+              </fieldset> -->
+
+             
+              <!-- <fieldset class="form-group">
+                <label for="ac_chit_value">{{ app.text.ac_chit_value || 'ac_chit_value' }}</label>
+                <app-select cId="ac_chit_value" name="ac_chit_value" #ac_chit_value="ngModel"
+                  placeholder="{{app.text.select || 'select'}} {{app.text.select_value || 'select_value'}}"
+                  [(ngModel)]="chit.ac_chit_value" required="false" 
+                  [payload]="ac_chit_value_payload" url="addchit/get_all_chitvalue"
+                  selectedUrl="addchit/get_all_chitvalue"></app-select>
+                <div [hidden]="ac_chit_value.valid || ac_chit_value.pristine" class="text-danger"> {{
+                  app.text.ac_chit_value || 'ac_chit_value' }} {{ app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset> -->
+
+              <!-- <fieldset class="form-group">
+                <label for="ac_chit_value">{{ app.text.ac_chit_value || 'ac_chit_value' }}</label>
+                <app-select cId="ac_chit_value" name="ac_chit_value" #ac_chit_value="ngModel"
+                  placeholder="{{app.text.select || 'select'}} {{app.text.ac_chit_value || 'ac_chit_value'}}"
+                  [(ngModel)]="chit.ac_chit_value" required="false" (change)="onChitvalueChanged($event)" [payload]="ac_chit_value_payload"
+                  url="addchit/get_all_chitvalue" selectedUrl="addchit/get_selected_chitvalue"></app-select>
+                <div [hidden]="ac_chit_value.valid || ac_chit_value.pristine" class="text-danger"> {{
+                  app.text.ac_name || 'ac_chit_value' }} {{ app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset> -->
+              <!-- <fieldset class="form-group">
+                
+                <label for="">Chit Group</label>
+                <app-text-field [(ngModel)]="chit.ac_chit_group" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ac_chit_group || 'ac_chit_group' }}"  name="ac_chit_group" 
+                  cId="ac_chit_group" #ac_chit_group="ngModel" required="false" ></app-text-field>
+                <div [hidden]="ac_chit_group.valid" class="text-danger"> {{ app.text.ac_chit_group || 'ac_chit_group' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset> -->
+              <fieldset class="form-group">
+                <!-- <label for="ac_chit_value">{{ app.text.ac_chit_value || 'ac_chit_value' }}</label> -->
+                <!-- <label for="">Chit Scheme</label> -->
+                <app-text-field [(ngModel)]="chit.ac_chit_scheme" type="hidden" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ac_chit_scheme || 'ac_chit_scheme' }}"  name="ac_chit_scheme" 
+                  cId="ac_chit_scheme" #ac_chit_scheme="ngModel" required="false" ></app-text-field>
+                <div [hidden]="ac_chit_scheme.valid" class="text-danger"> {{ app.text.ac_chit_scheme || 'ac_chit_scheme' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="ac_chit_value">{{ app.text.ac_chit_value || 'ac_chit_value' }}</label> -->
+                <!-- <label for="">Chit Value</label> -->
+                <app-text-field [(ngModel)]="chit.ac_chit_value" type="hidden" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ac_chit_value || 'ac_chit_value' }}"  name="ac_chit_value" 
+                  cId="ac_chit_value" #ac_chit_value="ngModel" required="false" ></app-text-field>
+                <div [hidden]="ac_chit_value.valid" class="text-danger"> {{ app.text.ac_chit_value || 'ac_chit_value' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+
+          <fieldset class="form-group">
+            <!-- <label for="ac_no_of_members">{{ app.text.ac_no_of_members || 'ac_no_of_members' }}</label> -->
+            <label for="ac_no_of_members">No.of Memebers</label>
+            <app-text-field [(ngModel)]="chit.ac_no_of_members" type="text" view="input"
+              placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ac_no_of_members || 'ac_no_of_members' }}" name="ac_no_of_members"
+              cId="ac_no_of_members" #ac_no_of_members="ngModel" required="false"></app-text-field>
+            <div [hidden]="ac_no_of_members.valid" class="text-danger"> {{ app.text.ac_no_of_members || 'ac_no_of_members' }} {{
+              app.text.is_required || 'is_required' }}
+            </div>
+          </fieldset>
+          <fieldset class="form-group">
+            <!-- <label for="ac_no_of_installment">{{ app.text.ac_no_of_installment || 'ac_no_of_installment' }}</label> -->
+            <label for="ac_no_of_installment">No.of Installment</label>
+            <app-text-field [(ngModel)]="chit.ac_no_of_installment" type="text" view="input"
+              placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ac_no_of_installment || 'ac_no_of_installment' }}"  name="ac_no_of_installment" 
+              cId="ac_no_of_installment" #ac_no_of_installment="ngModel" required="false" ></app-text-field>
+            <div [hidden]="ac_no_of_installment.valid" class="text-danger"> {{ app.text.ac_no_of_installment || 'ac_no_of_installment' }} {{
+              app.text.is_required || 'is_required' }}
+            </div>
+          </fieldset>
+           <!-- <div *ngIf="chit.ac_no_of_installment=='11'">  -->
+          <!-- <div  *ngFor="let chit of [].constructor(this.chit.ac_no_of_installment); let i = index "> -->
+            <div id="cinte">
+
+              <!-- <div *ngFor="let chit of counter(this.bees); let i = index"> -->
+                <!-- <input type="text" name="ac_ceiling[]" [(ngModel)]="chit.ac_ceiling" /> -->
+                <!-- <label>Ceiling{{i+1}} jhj {{this.chit.ac_no_of_installment}}</label> -->
+                <!-- <label>Ceiling{{i+1}}</label>
+                <app-text-field [(ngModel)]="chit.ac_ceiling" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ac_ceiling || 'ac_ceiling'}}"  name="ac_ceiling[]"
+                  cId="ac_ceiling" #ac_ceiling="ngModel" required="false" ></app-text-field> -->
+                  <!-- <input type="text"> -->
+          </div>
+              <!-- </div>  -->
+            <!-- </div> -->
+            <!-- <div formArrayName='resourceId'>
+              <br/>
+              <div *ngFor='let chit of resourceId.controls; let i = index'>
+                <input type='text'>
+              </div>
+            </div> -->
+             <!-- <fieldset class="form-group">
+              <label>Ceiling</label>
+              <app-text-field [(ngModel)]="chit.cd_ceiling" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cd_ceiling || 'cd_ceiling'}}"  name="cd_ceiling"
+                  cId="cd_ceiling" #cd_ceiling="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cd_ceiling.valid" class="text-danger"> {{ app.text.cd_ceiling || 'cd_ceiling' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+             </fieldset> -->
+             <!-- <fieldset class="form-group">
+              <label>chit no</label>
+              <app-text-field [(ngModel)]="chit.cd_chit_no" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cd_chit_no || 'cd_chit_no'}}"  name="cd_chit_no"
+                  cId="cd_chit_no" #cd_chit_no="ngModel" required="false" ></app-text-field>
+                  <div [hidden]="cd_chit_no.valid" class="text-danger"> {{ app.text.cd_chit_no || 'cd_chit_no' }} {{
+                    app.text.is_required || 'is_required' }}
+                  </div>
+             </fieldset> -->
+              <fieldset class="form-group">
+                <!-- <label for="ac_date_of_joining">{{ app.text.ac_date_of_joining || 'ac_date_of_joining' }}</label> -->
+                <label for="ac_date_of_joining">Date Of Joining</label>
+                <app-date-time-picker [(ngModel)]="chit.ac_date_of_joining" name="ac_date_of_joining" cId="ac_date_of_joining" #ac_date_of_joining="ngModel"
+                  required="false"></app-date-time-picker>
+                <div [hidden]="ac_date_of_joining.valid || ac_date_of_joining.pristine" class="text-danger"> {{
+                  app.text.ac_date_of_joining || 'ac_date_of_joining' }} {{ app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <!-- <label for="ac_first_payment">{{ app.text.ac_first_payment || 'ac_first_payment' }}</label> -->
+                <label for="ac_first_payment">First Payment</label>
+                <app-text-field [(ngModel)]="chit.ac_first_payment" type="text" view="input"
+                  placeholder="{{ app.text.enter || 'enter' }} {{ app.text.ac_first_payment || 'ac_first_payment' }}"  name="ac_first_payment" 
+                  cId="ac_first_payment" #ac_first_payment="ngModel" required="false" ></app-text-field>
+                <div [hidden]="ac_first_payment.valid" class="text-danger"> {{ app.text.ac_first_payment || 'ac_first_payment' }} {{
+                  app.text.is_required || 'is_required' }}
+                </div>
+              </fieldset>
+
+             
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary btn-round waves-effect" [disabled]="!baseForm.form.valid"
+            *ngIf="loadingText == 'Save'">
+            {{ app.text.save || 'save' }}
+          </button>
+          <button type="submit" class="btn btn-primary btn-round waves-effect" disabled *ngIf="loadingText != 'Save'">
+            {{ app.text.saving || 'saving' }}
+          </button>
+          <button type="button" class="btn btn-danger btn-round waves-effect" data-dismiss="modal">{{ app.text.cancel ||
+            'cancel' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="modal_cust" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    
+    <div class="modal-content">
+      <form (ngSubmit)="onSubm()" #baseForm="ngForm">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <fieldset class="form-group">
+          <app-text-field [(ngModel)]="multicust.cu_ac_id" type="hidden" view="input"
+          placeholder="{{ app.text.enter || 'enter' }} {{ app.text.cu_ac_id || 'cu_ac_id' }}"  name="cu_ac_id" 
+          cId="cu_ac_id" #cu_ac_id="ngModel" required="false" ></app-text-field>
+        <div [hidden]="cu_ac_id.valid" class="text-danger"> {{ app.text.cu_ac_id || 'cu_ac_id' }} {{
+          app.text.is_required || 'is_required' }}
+        </div>
+        </fieldset>
+        <fieldset class="form-group">
+          <label>custmer Id</label>
+           <!-- <fieldset class="form-group">
+             
+              <label for="">Chit Group</label>
+              <select class="form-control input-lg"  id="mylist"   [(ngModel)]="chit.ac_cg_id" name="ac_cg_id"  style="width:100%" (change)="onChitschemeIdChanged($event.target.value)" >
+                <option value="-1">Select</option>
+                <option *ngFor='let chitgroup of chitgroups'  [value]="chitgroup.cg_group_name">{{ chitgroup.cg_group_name }}</option>
+              </select>
+            </fieldset> -->
+          <app-select-mulitple cId="cu_nc_id" name="ac_nc_id"
+                            #cu_nc_id="ngModel"
+                            placeholder="{{app.text.select || 'select'}} {{app.text.cu_nc_id || 'cu_nc_id'}}"
+                            [(ngModel)]="multicust.cu_nc_id" required="false"
+                            [payload]="ac_customer_id_payload"
+                            url="chitusers/get_all_newcustomer" class="customer" ></app-select-mulitple>
+                          <div [hidden]="cu_nc_id.valid || cu_nc_id.pristine"
+                            class="text-danger"> {{ app.text.cu_nc_id || 'cu_nc_id' }}
+                            {{ app.text.is_required || 'is_required' }}
+                          </div>
+                          <!-- <select class="js-example-basic-multiple" id="cu_nc_id" name="cu_nc_id" [(ngModel)]="multicust.cu_nc_id" required="false"
+                          multiple="multiple">
+                           
+                          </select> -->
+        </fieldset>
+      <!-- <fieldset class="form-group">
+        <select id="choices-multiple-remove-button" placeholder="Select upto 5 tags" multiple>
+          <option *ngFor='let customer of customers'  [value]="customer.nc_customer_id">{{ customer.nc_name }}</option>
+        </select>
+      </fieldset> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Save changes</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>

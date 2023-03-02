@@ -1,0 +1,208 @@
+
+
+<section class="content">
+  <div class="block-header">
+      <div class="row">
+          <div class="col-lg-7 col-md-6 col-sm-12">
+              <h2>{{ app.text.settings || 'settings' }}
+              <small class="text-muted"></small>
+              </h2>
+          </div>
+          <div class="col-lg-5 col-md-6 col-sm-12">    
+                        </div>
+      </div>
+  </div>
+  <div class="container-fluid">
+      <div class="row clearfix">
+          <div class="col-lg-12">
+              <div class="card">
+                  <div class="body">
+                    <h2 class="card-inside-title"></h2>
+                        <form (ngSubmit)="onSubmit()" #baseForm="ngForm">
+     <div class="row">
+    <div class="col-md-12">
+
+        
+                    <fieldset class="form-group">
+                        <label for="set_company_name">{{ app.text.set_company_name || 'set_company_name' }}</label>
+                        <app-text-field [(ngModel)]="setting.set_company_name" 
+                            type="text" view="input"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.set_company_name || 'set_company_name' }}" 
+                            name="set_company_name" cId="set_company_name" 
+                            #set_company_name="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="set_company_name.valid" class="text-danger"> {{ app.text.set_company_name || 'set_company_name' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            
+                    <fieldset class="form-group">
+                        <label for="set_contact_person">{{ app.text.set_contact_person || 'set_contact_person' }}</label>
+                        <app-text-field [(ngModel)]="setting.set_contact_person" 
+                            type="text" view="input"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.set_contact_person || 'set_contact_person' }}" 
+                            name="set_contact_person" cId="set_contact_person" 
+                            #set_contact_person="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="set_contact_person.valid" class="text-danger"> {{ app.text.set_contact_person || 'set_contact_person' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                                                <fieldset class="form-group">
+                        <label for="set_logo">{{ app.text.set_logo || 'set_logo' }}</label>
+                        <app-image-upload cId="set_logo" name="set_logo" [(ngModel)]="setting.set_logo" #set_logo="ngModel"></app-image-upload>
+                        <div [hidden]="set_logo.valid || set_logo.pristine" class="text-danger"> {{ app.text.set_logo || 'set_logo' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                                    <fieldset class="form-group">
+                        <label for="set_address">{{ app.text.set_address || 'set_address' }}</label>
+                        <app-text-area [(ngModel)]="setting.set_address" 
+                            view="textarea"
+                            type="mediumtext"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.set_address || 'set_address' }}" 
+                            name="set_address" cId="set_address" #set_address="ngModel" 
+            required="false"></app-text-area>
+                        <div [hidden]="set_address.valid" class="text-danger"> {{ app.text.set_address || 'set_address' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+        
+                    <fieldset class="form-group">
+                        <label for="set_phone">{{ app.text.set_phone || 'set_phone' }}</label>
+                        <app-text-field [(ngModel)]="setting.set_phone" 
+                            type="text" view="phone"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.set_phone || 'set_phone' }}" 
+                            name="set_phone" cId="set_phone" 
+                            #set_phone="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="set_phone.valid" class="text-danger"> {{ app.text.set_phone || 'set_phone' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            
+                    <fieldset class="form-group">
+                        <label for="set_email">{{ app.text.set_email || 'set_email' }}</label>
+                        <app-text-field [(ngModel)]="setting.set_email" 
+                            type="text" view="email"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.set_email || 'set_email' }}" 
+                            name="set_email" cId="set_email" 
+                            #set_email="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="set_email.valid" class="text-danger"> {{ app.text.set_email || 'set_email' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            
+                    <fieldset class="form-group">
+                        <label for="set_whatsapp">{{ app.text.set_whatsapp || 'set_whatsapp' }}</label>
+                        <app-text-field [(ngModel)]="setting.set_whatsapp" 
+                            type="text" view="phone"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.set_whatsapp || 'set_whatsapp' }}" 
+                            name="set_whatsapp" cId="set_whatsapp" 
+                            #set_whatsapp="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="set_whatsapp.valid" class="text-danger"> {{ app.text.set_whatsapp || 'set_whatsapp' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            
+                    <fieldset class="form-group">
+                        <label for="set_lat">{{ app.text.set_lat || 'set_lat' }}</label>
+                        <app-text-field [(ngModel)]="setting.set_lat" 
+                            type="text" view="input"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.set_lat || 'set_lat' }}" 
+                            name="set_lat" cId="set_lat" 
+                            #set_lat="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="set_lat.valid" class="text-danger"> {{ app.text.set_lat || 'set_lat' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            
+                    <fieldset class="form-group">
+                        <label for="set_lon">{{ app.text.set_lon || 'set_lon' }}</label>
+                        <app-text-field [(ngModel)]="setting.set_lon" 
+                            type="text" view="input"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.set_lon || 'set_lon' }}" 
+                            name="set_lon" cId="set_lon" 
+                            #set_lon="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="set_lon.valid" class="text-danger"> {{ app.text.set_lon || 'set_lon' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                                                <app-map-view-retro [lat]="setting.set_lat" [lon]="setting.set_lon"
+                                (cordsChanged)="onMapCordsChanged($event)" cId="mapset_lon"
+                                ></app-map-view-retro>
+                                    
+                    <fieldset class="form-group">
+                        <label for="set_overdue_invoice_grace_period">{{ app.text.set_overdue_invoice_grace_period || 'set_overdue_invoice_grace_period' }}</label>
+                        <app-text-field [(ngModel)]="setting.set_overdue_invoice_grace_period" 
+                            type="text" view="phone"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.set_overdue_invoice_grace_period || 'set_overdue_invoice_grace_period' }}" 
+                            name="set_overdue_invoice_grace_period" cId="set_overdue_invoice_grace_period" 
+                            #set_overdue_invoice_grace_period="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="set_overdue_invoice_grace_period.valid" class="text-danger"> {{ app.text.set_overdue_invoice_grace_period || 'set_overdue_invoice_grace_period' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                                                <fieldset class="form-group">
+                        <label for="set_privacy_policy">{{ app.text.set_privacy_policy || 'set_privacy_policy' }}</label>
+                        <app-text-area [(ngModel)]="setting.set_privacy_policy" 
+                            view="textarea"
+                            type="richtext"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.set_privacy_policy || 'set_privacy_policy' }}" 
+                            name="set_privacy_policy" cId="set_privacy_policy" #set_privacy_policy="ngModel" 
+            required="false"></app-text-area>
+                        <div [hidden]="set_privacy_policy.valid" class="text-danger"> {{ app.text.set_privacy_policy || 'set_privacy_policy' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            <fieldset class="form-group">
+                        <label for="set_terms_and_conditions">{{ app.text.set_terms_and_conditions || 'set_terms_and_conditions' }}</label>
+                        <app-text-area [(ngModel)]="setting.set_terms_and_conditions" 
+                            view="textarea"
+                            type="richtext"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.set_terms_and_conditions || 'set_terms_and_conditions' }}" 
+                            name="set_terms_and_conditions" cId="set_terms_and_conditions" #set_terms_and_conditions="ngModel" 
+            required="false"></app-text-area>
+                        <div [hidden]="set_terms_and_conditions.valid" class="text-danger"> {{ app.text.set_terms_and_conditions || 'set_terms_and_conditions' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            <fieldset class="form-group">
+                        <label for="set_return_policy">{{ app.text.set_return_policy || 'set_return_policy' }}</label>
+                        <app-text-area [(ngModel)]="setting.set_return_policy" 
+                            view="textarea"
+                            type="richtext"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.set_return_policy || 'set_return_policy' }}" 
+                            name="set_return_policy" cId="set_return_policy" #set_return_policy="ngModel" 
+            required="false"></app-text-area>
+                        <div [hidden]="set_return_policy.valid" class="text-danger"> {{ app.text.set_return_policy || 'set_return_policy' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            <fieldset class="form-group">
+                        <label for="set_active">{{ app.text.set_active || 'set_active' }}</label>
+                        <select class="form-control" id="set_active" [(ngModel)]="setting.set_active"
+                                name="set_active" #set_active="ngModel" required>
+                                                            <option value="Y">{{ app.text.yes || 'yes' }}</option>
+                                                    <option value="N">{{ app.text.no || 'no' }}</option>
+                                            </select>
+                    </fieldset>
+            </div>
+</div>     <div class="row">
+                  <div class="col-md-12">
+              <div class="alert alert-dismissible alert-danger" style="margin: 10px" *ngIf="message !== ''">
+                {{ message }}</div>
+            </div>
+                  </div>
+      
+      <button type="submit" class="btn btn-primary btn-round waves-effect float-right" [disabled]="!baseForm.form.valid" *ngIf="loadingText == 'Save'">
+                {{ app.text.save || 'save' }}
+              </button>
+      <button type="submit" class="btn btn-primary btn-round waves-effect float-right" disabled *ngIf="loadingText != 'Save'">
+                {{ app.text.saving || 'saving' }}
+      </button>
+    </form>
+                        
+                    
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+
+
+
+

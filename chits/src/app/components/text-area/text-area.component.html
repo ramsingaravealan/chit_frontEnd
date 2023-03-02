@@ -1,0 +1,10 @@
+<ng-container *ngIf="type == 'mediumtext'">
+    <textarea class="form-control r-0" 
+    [(ngModel)]="val" 
+    [placeholder]="placeholder"
+    (ngModelChange)="onChange(val)" [id]="cId" [name]="cId" rows="4"></textarea>
+</ng-container>
+<ng-container *ngIf="type == 'richtext'">
+    <textarea class="form-control r-0" 
+    [id]="cId" [name]="cId" rows="4"></textarea>
+</ng-container>

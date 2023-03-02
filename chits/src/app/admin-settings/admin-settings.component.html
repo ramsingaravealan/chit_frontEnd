@@ -1,0 +1,207 @@
+<!-- 
+
+<section class="content">
+  <div class="block-header">
+      <div class="row">
+          <div class="col-lg-7 col-md-6 col-sm-12">
+              <h2>{{ app.text.admin_settings || 'admin_settings' }}
+              <small class="text-muted"></small>
+              </h2>
+          </div>
+          <div class="col-lg-5 col-md-6 col-sm-12">    
+                        </div>
+      </div>
+  </div>
+  <div class="container-fluid">
+      <div class="row clearfix">
+          <div class="col-lg-12">
+              <div class="card">
+                  <div class="body">
+                    <h2 class="card-inside-title"></h2>
+                        <form (ngSubmit)="onSubmit()" #baseForm="ngForm">
+     <div class="row">
+    <div class="col-md-12">
+
+        
+                    <fieldset class="form-group">
+                        <label for="as_company_name">{{ app.text.as_company_name || 'as_company_name' }}</label>
+                        <app-text-field [(ngModel)]="adminSetting.as_company_name" 
+                            type="text" view="input"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.as_company_name || 'as_company_name' }}" 
+                            name="as_company_name" cId="as_company_name" 
+                            #as_company_name="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="as_company_name.valid" class="text-danger"> {{ app.text.as_company_name || 'as_company_name' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            
+                    <fieldset class="form-group">
+                        <label for="as_email">{{ app.text.as_email || 'as_email' }}</label>
+                        <app-text-field [(ngModel)]="adminSetting.as_email" 
+                            type="text" view="email"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.as_email || 'as_email' }}" 
+                            name="as_email" cId="as_email" 
+                            #as_email="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="as_email.valid" class="text-danger"> {{ app.text.as_email || 'as_email' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            
+                    <fieldset class="form-group">
+                        <label for="as_website">{{ app.text.as_website || 'as_website' }}</label>
+                        <app-text-field [(ngModel)]="adminSetting.as_website" 
+                            type="text" view="input"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.as_website || 'as_website' }}" 
+                            name="as_website" cId="as_website" 
+                            #as_website="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="as_website.valid" class="text-danger"> {{ app.text.as_website || 'as_website' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                                                <fieldset class="form-group">
+                        <label for="as_address">{{ app.text.as_address || 'as_address' }}</label>
+                        <app-text-area [(ngModel)]="adminSetting.as_address" 
+                            view="textarea"
+                            type="mediumtext"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.as_address || 'as_address' }}" 
+                            name="as_address" cId="as_address" #as_address="ngModel" 
+            required="false"></app-text-area>
+                        <div [hidden]="as_address.valid" class="text-danger"> {{ app.text.as_address || 'as_address' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                          
+                           
+                          
+        
+                   
+                            
+                    <fieldset class="form-group">
+                        <label for="as_phone_no">{{ app.text.as_phone_no || 'as_phone_no' }}</label>
+                        <app-text-field [(ngModel)]="adminSetting.as_phone_no" 
+                            type="text" view="phone"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.as_phone_no || 'as_phone_no' }}" 
+                            name="as_phone_no" cId="as_phone_no" 
+                            #as_phone_no="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="as_phone_no.valid" class="text-danger"> {{ app.text.as_phone_no || 'as_phone_no' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                                                <fieldset class="form-group">
+                        <label for="as_logo">{{ app.text.as_logo || 'as_logo' }}</label>
+                        <app-image-upload cId="as_logo" name="as_logo" [(ngModel)]="adminSetting.as_logo" #as_logo="ngModel"></app-image-upload>
+                        <div [hidden]="as_logo.valid || as_logo.pristine" class="text-danger"> {{ app.text.as_logo || 'as_logo' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                
+                    <fieldset class="form-group">
+                        <label for="as_company_commission">{{ app.text.as_company_commission || 'as_company_commission' }}</label>
+                        <app-text-field [(ngModel)]="adminSetting.as_company_commission" 
+                            type="text" view="input"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.as_company_commission || 'as_company_commission' }}" 
+                            name="as_company_commission" cId="as_company_commission" 
+                            #as_company_commission="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="as_company_commission.valid" class="text-danger"> {{ app.text.as_company_commission || 'as_company_commission' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            
+                    <fieldset class="form-group">
+                        <label for="as_bank_charge">{{ app.text.as_bank_charge || 'as_bank_charge' }}</label>
+                        <app-text-field [(ngModel)]="adminSetting.as_bank_charge" 
+                            type="text" view="input"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.as_bank_charge || 'as_bank_charge' }}" 
+                            name="as_bank_charge" cId="as_bank_charge" 
+                            #as_bank_charge="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="as_bank_charge.valid" class="text-danger"> {{ app.text.as_bank_charge || 'as_bank_charge' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            
+                    <fieldset class="form-group">
+                        <label for="as_company_service_tax">{{ app.text.as_company_service_tax || 'as_company_service_tax' }}</label>
+                        <app-text-field [(ngModel)]="adminSetting.as_company_service_tax" 
+                            type="text" view="input"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.as_company_service_tax || 'as_company_service_tax' }}" 
+                            name="as_company_service_tax" cId="as_company_service_tax" 
+                            #as_company_service_tax="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="as_company_service_tax.valid" class="text-danger"> {{ app.text.as_company_service_tax || 'as_company_service_tax' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            
+                    <fieldset class="form-group">
+                        <label for="as_customer_service_tax">{{ app.text.as_customer_service_tax || 'as_customer_service_tax' }}</label>
+                        <app-text-field [(ngModel)]="adminSetting.as_customer_service_tax" 
+                            type="text" view="input"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.as_customer_service_tax || 'as_customer_service_tax' }}" 
+                            name="as_customer_service_tax" cId="as_customer_service_tax" 
+                            #as_customer_service_tax="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="as_customer_service_tax.valid" class="text-danger"> {{ app.text.as_customer_service_tax || 'as_customer_service_tax' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            
+                    <fieldset class="form-group">
+                        <label for="as_tds">{{ app.text.as_tds || 'as_tds' }}</label>
+                        <app-text-field [(ngModel)]="adminSetting.as_tds" 
+                            type="text" view="input"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.as_tds || 'as_tds' }}" 
+                            name="as_tds" cId="as_tds" 
+                            #as_tds="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="as_tds.valid" class="text-danger"> {{ app.text.as_tds || 'as_tds' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            
+                    <fieldset class="form-group">
+                        <label for="as_agent_service_charge">{{ app.text.as_agent_service_charge || 'as_agent_service_charge' }}</label>
+                        <app-text-field [(ngModel)]="adminSetting.as_agent_service_charge" 
+                            type="text" view="input"
+                            placeholder="{{ app.text.enter || 'enter' }} {{ app.text.as_agent_service_charge || 'as_agent_service_charge' }}" 
+                            name="as_agent_service_charge" cId="as_agent_service_charge" 
+                            #as_agent_service_charge="ngModel" 
+                             required="false" ></app-text-field>
+                        <div [hidden]="as_agent_service_charge.valid" class="text-danger"> {{ app.text.as_agent_service_charge || 'as_agent_service_charge' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                    </fieldset>
+                            
+                  
+                    <fieldset class="form-group">
+                        <label for="as_agent_start_date">{{ app.text.as_agent_start_date || 'as_agent_start_date' }}</label>
+                        <app-date-picker [(ngModel)]="adminSetting.as_agent_start_date" name="as_agent_start_date" cId="as_agent_start_date"
+                          #as_agent_start_date="ngModel" required="false"></app-date-picker>
+                        <div [hidden]="as_agent_start_date.valid || as_agent_start_date.pristine" class="text-danger"> {{ app.text.as_agent_start_date ||
+                          'as_agent_start_date' }} {{ app.text.is_required || 'is_required' }}
+                        </div>
+                      </fieldset>
+                            
+                    
+                            
+                   
+                                </div>
+</div>     <div class="row">
+                  <div class="col-md-12">
+              <div class="alert alert-dismissible alert-danger" style="margin: 10px" *ngIf="message !== ''">
+                {{ message }}</div>
+            </div>
+                  </div>
+      
+      <button type="submit" class="btn btn-primary btn-round waves-effect float-right" [disabled]="!baseForm.form.valid" *ngIf="loadingText == 'Save'">
+                {{ app.text.save || 'save' }}
+              </button>
+      <button type="submit" class="btn btn-primary btn-round waves-effect float-right" disabled *ngIf="loadingText != 'Save'">
+                {{ app.text.saving || 'saving' }}
+      </button>
+    </form>
+                        
+                    
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
+
+
+
+ -->

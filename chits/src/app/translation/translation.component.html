@@ -1,0 +1,230 @@
+<!-- Main Content -->
+<section class="content">
+  <div class="block-header">
+    <div class="row">
+      <div class="col-lg-7 col-md-6 col-sm-12">
+        <h2>{{ app.text.translations || 'translations' }}
+          <small class="text-muted"></small>
+        </h2>
+      </div>
+      <div class="col-lg-5 col-md-6 col-sm-12">
+        <button class="btn btn-primary btn-icon btn-round hidden-sm-down float-right m-l-10" type="button"
+          (click)="add()">
+          <i class="zmdi zmdi-plus"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row clearfix">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="body">
+            <div class="row">
+              <div class="col-md-12">
+                <form (ngSubmit)="onSearchSubmit()" #searchForm="ngForm">
+                  <div class="row">
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <label class="font-weight-normal">{{ app.text.per_page || 'per_page' }} <span
+                            class="required"></span></label>
+                        <select class="custom-select form-control" id="num_per_page" required [(ngModel)]="num_per_page"
+                          name="num_per_page" (change)="onChangePage()">
+                          <option value="5">5</option>
+                          <option value="10">10</option>
+                          <option value="25">25</option>
+                          <option value="50">50</option>
+                          <option value="100">100</option>
+                          <option value="200">200</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <fieldset class="form-group">
+                        <label class="font-weight-normal">{{ app.text.search || 'search' }}</label>
+                        <input type="text" class="form-control" id="search" [(ngModel)]="search"
+                          placeholder="{{ app.text.search || 'search' }}" name="search">
+                      </fieldset>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="form-group">
+                        <button type="submit" class="btn btn-primary btn-block pull-right"
+                          [disabled]="!searchForm.form.valid" style="margin-top: 29px">{{ app.text.search || 'search'
+                          }}</button>
+                      </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="form-group"> <a class="btn btn-danger btn-block pull-right" (click)="onClear()"
+                          style="margin-top: 29px;margin-bottom: 10px">{{ app.text.reset || 'reset' }}</a> </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="col-md-12">
+                <div class="bd rounded table-responsive">
+                  <table class="table table-bordered mg-b-0">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <!-- <th>ID #</th> -->
+                        <th>{{ app.text.identifier || 'identifier' }}</th>
+                        <th>{{ app.text.english || 'english' }}</th>
+                        <th>{{ app.text.tamil || 'tamil' }}</th>
+                        <!-- <th>Language 1</th>
+                                                <th>Language 2</th>
+                                                <th>Language 3</th>
+                                                <th>Language 4</th> -->
+                        <!-- <th>Active</th>
+                                      <th>Log</th> -->
+                        <!-- <th>Action</th> -->
+                      </tr>
+                      <!-- <tr>
+                                      <th colspan="4"><div style="text-align: center;">(hit enter key to save)</div></th>
+                                    </tr> -->
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let listItem of translations;let i = index">
+                        <td>{{i+1}}</td>
+                        <!-- <td>{{listItem.trx_id}}</td> -->
+                        <td>{{listItem.trx_key}}</td>
+                        <td>
+                          <fieldset class="form-group">
+                            <!-- <label for="mktp_name">Menu Name (Press Enter to Save)</label> -->
+                            <input class="form-control" type="text" [value]="listItem.trx_en"
+                              (keyup)="onKey($event,listItem)">
+                          </fieldset>
+
+                        </td>
+                        <td>
+                          <fieldset class="form-group">
+                            <!-- <label for="mktp_name">Menu Name (es) (Press Enter to Save)</label> -->
+                            <input class="form-control" type="text" [value]="listItem.trx_es"
+                              (keyup)="onKeyES($event,listItem)">
+                          </fieldset>
+                        </td>
+                        <!-- <td>{{listItem.trx_ln1}}</td>
+                                                <td>{{listItem.trx_ln2}}</td>
+                                                <td>{{listItem.trx_ln3}}</td>
+                                                <td>{{listItem.trx_ln4}}</td> -->
+                        <!-- <td>{{listItem.trx_active}}</td>
+                                      <td>{{listItem.trx_log}}</td> -->
+                        <!-- <td><a (click)="editItem(listItem)" style="cursor: pointer">Edit</a></td> -->
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <button class="btn btn-primary btn-block"
+                  *ngIf="start_from+received != count && translations.length > 0" (click)="moveNext()"><span
+                    class="pull-left"> {{displayCount}} </span> <span class="pull-right">{{
+                    app.text.load_more || 'load_more' }}..</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="modal fade" id="myModal" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <form (ngSubmit)="onSubmit()" #baseForm="ngForm">
+        <div class="modal-header">
+          <h4 class="title" id="largeModalLabeluser_id" *ngIf="translation.trx_id == '-1'">
+            {{ app.text.add || 'add' }}
+          </h4>
+          <h4 class="title" id="largeModalLabeluser_id" *ngIf="translation.trx_id != '-1'">
+            {{ app.text.edit || 'edit' }}
+          </h4>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+
+            <div class="col-md-12">
+              <fieldset class="form-group">
+                <label for="trx_key">{{ app.text.identifier || 'identifier' }} ({{ app.text.unique_name ||
+                  'unique_name' }}, {{ app.text.lower_cased || 'lower_cased' }})</label>
+                <input type="text" class="form-control" id="trx_key" required [(ngModel)]="translation.trx_key"
+                  name="trx_key" #trx_key="ngModel" placeholder="{{ app.text.enter_identifier || 'enter_identifier' }}">
+                <div [hidden]="trx_key.valid || trx_key.pristine" class="alert alert-danger"> {{
+                  app.text.identifier_is_required || 'identifier_is_required' }} </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <label for="trx_en">{{ app.text.english || 'english' }}</label>
+                <input type="text" class="form-control" id="trx_en" required [(ngModel)]="translation.trx_en"
+                  name="trx_en" #trx_en="ngModel" placeholder="Enter English">
+                <div [hidden]="trx_en.valid || trx_en.pristine" class="alert alert-danger"> {{
+                  app.text.english_is_required || 'english_is_required' }}
+                </div>
+              </fieldset>
+              <fieldset class="form-group">
+                <label for="trx_es">{{ app.text.tamil || 'tamil' }}</label>
+                <input type="text" class="form-control" id="trx_es" required [(ngModel)]="translation.trx_es"
+                  name="trx_es" #trx_es="ngModel" placeholder="Enter Tamil">
+                <div [hidden]="trx_es.valid || trx_es.pristine" class="alert alert-danger"> Tamil is required
+                </div>
+              </fieldset>
+              <!-- <fieldset class="form-group">
+                        <label for="trx_ln1">Language 1</label>
+                        <input type="text" class="form-control" id="trx_ln1" required [(ngModel)]="translation.trx_ln1"
+                          name="trx_ln1" #trx_ln1="ngModel" placeholder="Enter Language 1">
+                        <div [hidden]="trx_ln1.valid || trx_ln1.pristine" class="alert alert-danger"> Language 1 is
+                          required </div>
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <label for="trx_ln2">Language 2</label>
+                        <input type="text" class="form-control" id="trx_ln2" required [(ngModel)]="translation.trx_ln2"
+                          name="trx_ln2" #trx_ln2="ngModel" placeholder="Enter Language 2">
+                        <div [hidden]="trx_ln2.valid || trx_ln2.pristine" class="alert alert-danger"> Language 2 is
+                          required </div>
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <label for="trx_ln3">Language 3</label>
+                        <input type="text" class="form-control" id="trx_ln3" required [(ngModel)]="translation.trx_ln3"
+                          name="trx_ln3" #trx_ln3="ngModel" placeholder="Enter Language 3">
+                        <div [hidden]="trx_ln3.valid || trx_ln3.pristine" class="alert alert-danger"> Language 3 is
+                          required </div>
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <label for="trx_ln4">Language 4</label>
+                        <input type="text" class="form-control" id="trx_ln4" required [(ngModel)]="translation.trx_ln4"
+                          name="trx_ln4" #trx_ln4="ngModel" placeholder="Enter Language 4">
+                        <div [hidden]="trx_ln4.valid || trx_ln4.pristine" class="alert alert-danger"> Language 4 is
+                          required </div>
+                      </fieldset>
+                      <fieldset class="form-group">
+                        <label for="trx_active">Active</label>
+                        <select class="custom-select form-control" id="trx_active" required
+                          [(ngModel)]="translation.trx_active" name="trx_active" #trx_active="ngModel">
+                          <option value="Y">Active</option>
+                          <option value="N">Inactive</option>
+                        </select>
+                        <div [hidden]="trx_active.valid || trx_active.pristine" class="alert alert-danger"> Active is
+                          required </div>
+                      </fieldset> -->
+
+            </div>
+            <div class="col-md-12">
+              <div class="alert alert-dismissible alert-danger" style="margin: 10px" *ngIf="message !== ''">
+                {{ message }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary btn-round waves-effect" [disabled]="!baseForm.form.valid"
+            *ngIf="loadingText == 'Save'">
+            {{ app.text.save || 'save' }}
+          </button>
+          <button type="submit" class="btn btn-primary btn-round waves-effect" disabled *ngIf="loadingText != 'Save'">
+            {{ app.text.saving || 'saving' }}
+          </button>
+          <button type="button" class="btn btn-danger btn-round waves-effect" data-dismiss="modal">{{ app.text.cancel ||
+            'cancel' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

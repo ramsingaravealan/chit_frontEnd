@@ -1,0 +1,26 @@
+<div class="row">
+  <div class="col-md-12 text-center">
+    <img [src]="app.getProfileUrl()+mPhotoSrc"
+      class="img-thumbnail center-block imgp" (load)="onImgLoadComplete($event)">
+  </div>
+</div>
+<div class="row" *ngIf="uploadBtn == 'true'">
+  <div class="col-md-12">
+    <div class="form-group" style="margin-top: 10px">
+      <!-- <label class="btn btn-default btn-danger btn-block" *ngIf="browse == 'Browse'">
+        {{ app.text.browse || 'browse' }}
+        <input type="file" accept="image/*" class="hidden"
+          (change)="changeListener($event,cId)" [id]="cId">
+      </label> -->
+      <label class="btn btn-default btn-danger btn-block" *ngIf="browse == 'Processing..'">
+        {{progress}}
+      </label>
+      <label class="btn btn-default btn-danger btn-block" *ngIf="browse == 'Generating Preview'">
+        {{ app.text.generating_preview || 'generating_preview' }}...
+      </label>
+      <!-- <label class="btn btn-default btn-danger btn-block" *ngIf="browse == 'Browse'">
+        {{ app.text.browse || 'browse' }}
+      </label> -->
+    </div>
+  </div>
+</div>
